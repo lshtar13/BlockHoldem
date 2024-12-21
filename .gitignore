@@ -26,3 +26,6 @@ go.work.sum
 
 # executable
 BlockHoldem
+
+# Database file
+*.db
