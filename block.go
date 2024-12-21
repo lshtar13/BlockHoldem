@@ -53,14 +53,11 @@ func NewGenesisBlock() *Block {
 	return NewBlock("Genesis Block", []byte{})
 }
 
-func DeserializeBlock(d []byte) *Block {
+func DeserializeBlock(d []byte) (*Block, error) {
 	var block Block
 
 	decoder := gob.NewDecoder(bytes.NewReader(d))
 	err := decoder.Decode(&block)
-	if err != nil {
-		log.Panic(err)
-	}
 
-	return &block
+	return &block, err
 }
