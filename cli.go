@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"log"
 	"os"
 	"strconv"
 )
@@ -13,7 +14,7 @@ type CLI struct {
 
 func (cli *CLI) printUsage() {
 	fmt.Println("Usage:")
-	fmt.Println("  addBlock -data BLOCK_DATA - add a block to the blockchain")
+	fmt.Println("  createBlockchain -address ADDRESS - create new blockchain")
 	fmt.Println("  printChain - print all the blocks of the blockchain")
 }
 
@@ -26,14 +27,14 @@ func (cli *CLI) validateArgs() {
 
 func (cli *CLI) Run() {
 	cli.validateArgs()
-	addBlockCmd := flag.NewFlagSet("addBlock", flag.ExitOnError)
+	createBlockchainCmd := flag.NewFlagSet("createBlockchain", flag.ExitOnError)
 	printChainCmd := flag.NewFlagSet("printChain", flag.ExitOnError)
 
-	addBlockData := addBlockCmd.String("data", "", "Block data")
+	createBlockchainData := createBlockchainCmd.String("address", "", "address")
 
 	switch os.Args[1] {
-	case "addBlock":
-		addBlockCmd.Parse(os.Args[2:])
+	case "createBlockchain":
+		createBlockchainCmd.Parse(os.Args[2:])
 	case "printChain":
 		printChainCmd.Parse(os.Args[2:])
 	default:
@@ -41,12 +42,12 @@ func (cli *CLI) Run() {
 		os.Exit(1)
 	}
 
-	if addBlockCmd.Parsed() {
-		if *addBlockData == "" {
-			addBlockCmd.Usage()
+	if createBlockchainCmd.Parsed() {
+		if *createBlockchainData == "" {
+			createBlockchainCmd.Usage()
 			os.Exit(1)
 		}
-		cli.addBlock(*addBlockData)
+		cli.createBlockchain(*createBlockchainData)
 	}
 
 	if printChainCmd.Parsed() {
@@ -54,9 +55,13 @@ func (cli *CLI) Run() {
 	}
 }
 
-func (cli *CLI) addBlock(data string) {
-	cli.bc.AddBlock(data)
-	fmt.Println("Success!")
+func (cli *CLI) createBlockchain(data string) {
+	bc, err := CreateBlockchain(data)
+	if err != nil {
+		log.Panic(err)
+	}
+	cli.bc = bc
+	fmt.Println("Create new blockchain!")
 }
 
 func (cli *CLI) printChain() {
@@ -65,7 +70,6 @@ func (cli *CLI) printChain() {
 	for {
 		block, _ := bci.Next()
 		fmt.Printf("Prev. hash : %x\n", block.PrevBlockHash)
-		fmt.Printf("Data: %s\n", block.Data)
 		fmt.Printf("Hash: %x\n", block.Hash)
 
 		pow := NewProofOfWork(block)
