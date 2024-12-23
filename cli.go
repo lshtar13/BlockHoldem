@@ -30,9 +30,13 @@ func (cli *CLI) Run() {
 	createBlockchainCmd := flag.NewFlagSet("createBlockchain", flag.ExitOnError)
 	printChainCmd := flag.NewFlagSet("printChain", flag.ExitOnError)
 	getBalanceCmd := flag.NewFlagSet("getBalance", flag.ExitOnError)
+	sendCmd := flag.NewFlagSet("send", flag.ExitOnError)
 
-	createBlockchainData := createBlockchainCmd.String("address", "", "address")
-	getBalanceData := getBalanceCmd.String("address", "", "address")
+	createAddress := createBlockchainCmd.String("address", "", "address")
+	getBalanceAddress := getBalanceCmd.String("address", "", "address")
+	sendFrom := sendCmd.String("from", "", "from")
+	sendTo := sendCmd.String("to", "", "to")
+	sendAmount := sendCmd.String("amount", "", "amount")
 
 	switch os.Args[1] {
 	case "createBlockchain":
@@ -41,17 +45,19 @@ func (cli *CLI) Run() {
 		printChainCmd.Parse(os.Args[2:])
 	case "getBalance":
 		getBalanceCmd.Parse(os.Args[2:])
+	case "send":
+		sendCmd.Parse(os.Args[2:])
 	default:
 		cli.printUsage()
 		os.Exit(1)
 	}
 
 	if createBlockchainCmd.Parsed() {
-		if *createBlockchainData == "" {
+		if *createAddress == "" {
 			createBlockchainCmd.Usage()
 			os.Exit(1)
 		}
-		cli.createBlockchain(*createBlockchainData)
+		cli.createBlockchain(*createAddress)
 	}
 
 	if printChainCmd.Parsed() {
@@ -59,11 +65,22 @@ func (cli *CLI) Run() {
 	}
 
 	if getBalanceCmd.Parsed() {
-		if *getBalanceData == "" {
+		if *getBalanceAddress == "" {
 			getBalanceCmd.Usage()
 			os.Exit(1)
 		}
-		cli.getBalance(*getBalanceData)
+		cli.getBalance(*getBalanceAddress)
+	}
+
+	if sendCmd.Parsed() {
+		for _, data := range []*string{sendFrom, sendTo, sendAmount} {
+			if *data == "" {
+				sendCmd.Usage()
+				os.Exit(1)
+			}
+		}
+		amount, _ := strconv.Atoi(*sendAmount)
+		cli.send(*sendFrom, *sendTo, amount)
 	}
 }
 
@@ -106,4 +123,13 @@ func (cli *CLI) getBalance(address string) {
 	}
 
 	fmt.Printf("Balance of '%s': %d\n", address, balance)
+}
+
+func (cli *CLI) send(from, to string, amount int) {
+	bc, _ := NewBlockchain(from)
+	defer bc.db.Close()
+
+	tx := bc.NewUTXOTransaction(from, to, amount)
+	bc.MineBlock([]*Transaction{tx})
+	fmt.Println("Success!")
 }

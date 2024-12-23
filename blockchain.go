@@ -1,7 +1,9 @@
 package main
 
 import (
+	"encoding/hex"
 	"fmt"
+	"log"
 	"os"
 
 	"github.com/boltdb/bolt"
@@ -29,7 +31,7 @@ func dbExists() bool {
 	return true
 }
 
-func (bc *Blockchain) AddBlock(txs []*Transaction) error {
+func (bc *Blockchain) MineBlock(txs []*Transaction) error {
 	err := bc.db.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(blocksBucket))
 		bc.tip = b.Get([]byte("l"))
@@ -37,11 +39,18 @@ func (bc *Blockchain) AddBlock(txs []*Transaction) error {
 		return nil
 	})
 
+	if err != nil {
+		log.Panic("Error: extracting lasthash from blockchain")
+	}
+
 	newBlock := NewBlock(txs, bc.tip)
 
 	err = bc.db.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(blocksBucket))
 		err := b.Put(newBlock.Hash, newBlock.Serialize())
+		if err != nil {
+			return err
+		}
 		err = b.Put([]byte("l"), newBlock.Hash)
 		bc.tip = newBlock.Hash
 
@@ -84,6 +93,62 @@ func (bc *Blockchain) FindUTXO(address string) []TXOutput {
 	}
 
 	return UTXOs
+}
+
+func (bc *Blockchain) FindSpendableOutputs(address string, amount int) (int, map[string][]int) {
+	unspentOutputs := make(map[string][]int)
+	unspentTXs := bc.FindUnspentTransactions(address)
+	accumulated := 0
+
+Work:
+	for _, tx := range unspentTXs {
+		txID := hex.EncodeToString(tx.ID)
+
+		for outIdx, out := range tx.Vout {
+			if out.CanBeUnlockedWith(address) && accumulated < amount {
+				accumulated += out.Value
+				unspentOutputs[txID] = append(unspentOutputs[txID], outIdx)
+
+				if accumulated >= amount {
+					break Work
+				}
+			}
+		}
+	}
+
+	return accumulated, unspentOutputs
+}
+
+func (bc *Blockchain) NewUTXOTransaction(from, to string, amount int) *Transaction {
+	var inputs []TXInput
+	var outputs []TXOutput
+
+	acc, validOutputs := bc.FindSpendableOutputs(from, amount)
+	if acc < amount {
+		log.Panic("Error: Not enough funds")
+	}
+
+	// inputs
+	for txid, outs := range validOutputs {
+		txID, _ := hex.DecodeString(txid)
+
+		for _, out := range outs {
+			// txid, output index, signature(address for now)
+			input := TXInput{txID, out, from}
+			inputs = append(inputs, input)
+		}
+	}
+
+	outputs = append(outputs, TXOutput{amount, to})
+	if acc > amount {
+		// refund
+		outputs = append(outputs, TXOutput{acc - amount, from})
+	}
+
+	tx := Transaction{nil, inputs, outputs}
+	tx.SetID()
+
+	return &tx
 }
 
 func NewBlockchain(address string) (*Blockchain, error) {
