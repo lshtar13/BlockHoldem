@@ -29,14 +29,18 @@ func (cli *CLI) Run() {
 	cli.validateArgs()
 	createBlockchainCmd := flag.NewFlagSet("createBlockchain", flag.ExitOnError)
 	printChainCmd := flag.NewFlagSet("printChain", flag.ExitOnError)
+	getBalanceCmd := flag.NewFlagSet("getBalance", flag.ExitOnError)
 
 	createBlockchainData := createBlockchainCmd.String("address", "", "address")
+	getBalanceData := getBalanceCmd.String("address", "", "address")
 
 	switch os.Args[1] {
 	case "createBlockchain":
 		createBlockchainCmd.Parse(os.Args[2:])
 	case "printChain":
 		printChainCmd.Parse(os.Args[2:])
+	case "getBalance":
+		getBalanceCmd.Parse(os.Args[2:])
 	default:
 		cli.printUsage()
 		os.Exit(1)
@@ -52,6 +56,14 @@ func (cli *CLI) Run() {
 
 	if printChainCmd.Parsed() {
 		cli.printChain()
+	}
+
+	if getBalanceCmd.Parsed() {
+		if *getBalanceData == "" {
+			getBalanceCmd.Usage()
+			os.Exit(1)
+		}
+		cli.getBalance(*getBalanceData)
 	}
 }
 
@@ -80,4 +92,18 @@ func (cli *CLI) printChain() {
 			break
 		}
 	}
+}
+
+func (cli *CLI) getBalance(address string) {
+	bc, _ := NewBlockchain(address)
+	defer bc.db.Close()
+
+	balance := 0
+	UTXOs := bc.FindUTXO(address)
+
+	for _, out := range UTXOs {
+		balance += out.Value
+	}
+
+	fmt.Printf("Balance of '%s': %d\n", address, balance)
 }

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"crypto/sha256"
 	"encoding/gob"
+	"encoding/hex"
 	"fmt"
 )
 
@@ -34,6 +35,50 @@ func (out *TXOutput) CanBeUnlockedWith(scriptSig string) bool {
 	return out.ScriptPubkey == scriptSig
 }
 
+func (bc *Blockchain) FindUnspentTransactions(address string) []Transaction {
+	var unspentTXs []Transaction
+	spentTXOs := make(map[string][]int)
+	bci := bc.Iterator()
+
+	for {
+		block, _ := bci.Next()
+
+		for _, tx := range block.Transactions {
+			txID := hex.EncodeToString(tx.ID)
+
+		Outputs:
+			for outIdx, out := range tx.Vout {
+				if spentTXOs[txID] != nil {
+					for _, spentOut := range spentTXOs[txID] {
+						if spentOut == outIdx {
+							continue Outputs
+						}
+					}
+				}
+
+				if out.CanBeUnlockedWith(address) {
+					unspentTXs = append(unspentTXs, *tx)
+				}
+			}
+			// 최근의 블록 부터 검사하기 때문에 가능 ...
+			if !tx.IsCoinbase() {
+				for _, in := range tx.Vin {
+					if in.CanUnlockOutputWith(address) {
+						inTxID := hex.EncodeToString(in.Txid)
+						spentTXOs[inTxID] = append(spentTXOs[inTxID], in.Vout)
+					}
+				}
+			}
+		}
+
+		if len(block.PrevBlockHash) == 0 {
+			break
+		}
+	}
+
+	return unspentTXs
+}
+
 func (tx *Transaction) SetID() error {
 	var encoded bytes.Buffer
 	var hash [32]byte
@@ -44,6 +89,10 @@ func (tx *Transaction) SetID() error {
 	tx.ID = hash[:]
 
 	return err
+}
+
+func (tx *Transaction) IsCoinbase() bool {
+	return tx.Vin[0].Vout == -1
 }
 
 // to - address, data - signature

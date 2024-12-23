@@ -71,6 +71,21 @@ func (bci *BlockchainIterator) Next() (*Block, error) {
 	return block, err
 }
 
+func (bc *Blockchain) FindUTXO(address string) []TXOutput {
+	var UTXOs []TXOutput
+	unspentTransactions := bc.FindUnspentTransactions(address)
+
+	for _, tx := range unspentTransactions {
+		for _, out := range tx.Vout {
+			if out.CanBeUnlockedWith(address) {
+				UTXOs = append(UTXOs, out)
+			}
+		}
+	}
+
+	return UTXOs
+}
+
 func NewBlockchain(address string) (*Blockchain, error) {
 	if !dbExists() {
 		fmt.Printf("No existing blockchain ...")
