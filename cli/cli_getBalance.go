@@ -1,10 +1,14 @@
-package main
+package cli
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/lshtar13/BlockHoldem/blockchain"
+)
 
 func (cli *CLI) getBalance(address string) {
-	bc, _ := NewBlockchain(address)
-	defer bc.db.Close()
+	bc, _ := blockchain.NewBlockchain(address)
+	defer bc.DB.Close()
 
 	balance := 0
 	UTXOs := bc.FindUTXO(address)

@@ -1,8 +1,10 @@
-package main
+package base58
 
 import (
 	"bytes"
 	"math/big"
+
+	"github.com/lshtar13/BlockHoldem/utils"
 )
 
 var b58Alphabet = []byte("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")
@@ -22,7 +24,7 @@ func Base58Encode(input []byte) []byte {
 		result = append(result, b58Alphabet[mod.Int64()])
 	}
 
-	ReverseBytes(result)
+	utils.ReverseBytes(result)
 	for b := range input {
 		if b == 0x00 {
 			result = append([]byte{b58Alphabet[0]}, result...)

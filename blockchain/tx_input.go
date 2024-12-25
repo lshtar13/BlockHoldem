@@ -1,6 +1,10 @@
-package main
+package blockchain
 
-import "bytes"
+import (
+	"bytes"
+
+	wlt "github.com/lshtar13/BlockHoldem/wallet"
+)
 
 type TXInput struct {
 	Txid      []byte
@@ -10,7 +14,7 @@ type TXInput struct {
 }
 
 func (in *TXInput) UseKey(pubKeyHash []byte) bool {
-	lockingHash := HashPubkey(in.Pubkey)
+	lockingHash := wlt.HashPubkey(in.Pubkey)
 
 	return bytes.Compare(lockingHash, pubKeyHash) == 0
 }

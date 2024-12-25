@@ -1,12 +1,14 @@
-package main
+package cli
 
 import (
 	"fmt"
 	"log"
+
+	"github.com/lshtar13/BlockHoldem/blockchain"
 )
 
 func (cli *CLI) createBlockchain(data string) {
-	bc, err := CreateBlockchain(data)
+	bc, err := blockchain.CreateBlockchain(data)
 	if err != nil {
 		log.Panic(err)
 	}

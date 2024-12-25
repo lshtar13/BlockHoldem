@@ -1,6 +1,8 @@
-package main
+package blockchain
 
-import "github.com/boltdb/bolt"
+import (
+	"github.com/boltdb/bolt"
+)
 
 type BlockchainIterator struct {
 	currentHash []byte

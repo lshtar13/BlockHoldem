@@ -1,4 +1,4 @@
-package main
+package blockchain
 
 import (
 	"encoding/hex"
@@ -7,11 +7,12 @@ import (
 	"os"
 
 	"github.com/boltdb/bolt"
+	wlt "github.com/lshtar13/BlockHoldem/wallet"
 )
 
 type Blockchain struct {
 	tip []byte
-	db  *bolt.DB
+	DB  *bolt.DB
 }
 
 const dbFile = "blockchain.db"
@@ -27,7 +28,7 @@ func dbExists() bool {
 }
 
 func (bc *Blockchain) MineBlock(txs []*Transaction) error {
-	err := bc.db.View(func(tx *bolt.Tx) error {
+	err := bc.DB.View(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(blocksBucket))
 		bc.tip = b.Get([]byte("l"))
 
@@ -40,7 +41,7 @@ func (bc *Blockchain) MineBlock(txs []*Transaction) error {
 
 	newBlock := NewBlock(txs, bc.tip)
 
-	err = bc.db.Update(func(tx *bolt.Tx) error {
+	err = bc.DB.Update(func(tx *bolt.Tx) error {
 		b := tx.Bucket([]byte(blocksBucket))
 		err := b.Put(newBlock.Hash, newBlock.Serialize())
 		if err != nil {
@@ -56,15 +57,15 @@ func (bc *Blockchain) MineBlock(txs []*Transaction) error {
 }
 
 func (bc *Blockchain) Iterator() *BlockchainIterator {
-	return &BlockchainIterator{bc.tip, bc.db}
+	return &BlockchainIterator{bc.tip, bc.DB}
 }
 
 func (bc *Blockchain) FindUTXO(address string) []TXOutput {
 	var UTXOs []TXOutput
 
-	wallets, _ := NewWallets()
+	wallets, _ := wlt.NewWallets()
 	wallet := wallets.GetWallet(address)
-	pubKeyHash := HashPubkey(wallet.PublicKey)
+	pubKeyHash := wlt.HashPubkey(wallet.PublicKey)
 	fmt.Printf("address: %s pubkeyHash: %x \n", address, pubKeyHash)
 	unspentTransactions := bc.FindUnspentTransactions(pubKeyHash)
 
@@ -187,11 +188,11 @@ func CreateBlockchain(address string) (*Blockchain, error) {
 		return nil, err
 	}
 
-	err = db.Update(func(tx *bolt.Tx) error {
+	err = db.Update(func(btx *bolt.Tx) error {
 		cbtx := NewCoinbaseTX(address, genesisCoinbaseData)
 		genesis := NewGenesisBlock(cbtx)
 
-		b, err := tx.CreateBucket([]byte(blocksBucket))
+		b, err := btx.CreateBucket([]byte(blocksBucket))
 		if err != nil {
 			return err
 		}

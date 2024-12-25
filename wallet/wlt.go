@@ -1,4 +1,4 @@
-package main
+package wallet
 
 import (
 	"bytes"
@@ -10,6 +10,7 @@ import (
 	"log"
 	"math/big"
 
+	"github.com/lshtar13/BlockHoldem/base58"
 	"golang.org/x/crypto/ripemd160"
 )
 
@@ -53,7 +54,7 @@ func (w *Wallet) GetAddress() string {
 	checksum := checksum(versionedPayload)
 
 	fullPayload := append(versionedPayload, checksum...)
-	address := Base58Encode(fullPayload)
+	address := base58.Base58Encode(fullPayload)
 
 	return string(address)
 }

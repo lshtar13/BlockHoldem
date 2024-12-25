@@ -1,14 +1,16 @@
-package main
+package cli
 
 import (
 	"flag"
 	"fmt"
 	"os"
 	"strconv"
+
+	"github.com/lshtar13/BlockHoldem/blockchain"
 )
 
 type CLI struct {
-	bc *Blockchain
+	bc *blockchain.Blockchain
 }
 
 func (cli *CLI) printUsage() {

@@ -1,4 +1,4 @@
-package main
+package blockchain
 
 import (
 	"bytes"
@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"math"
 	"math/big"
+
+	"github.com/lshtar13/BlockHoldem/utils"
 )
 
 var (
@@ -27,9 +29,9 @@ func NewProofOfWork(b *Block) *ProofOfWork {
 }
 
 func (pow *ProofOfWork) prepareData(_nonce int) []byte {
-	timestamp, _ := IntToHex(pow.block.Timestamp)
-	hardness, _ := IntToHex(int64(targetBits))
-	nonce, _ := IntToHex(int64(_nonce))
+	timestamp, _ := utils.IntToHex(pow.block.Timestamp)
+	hardness, _ := utils.IntToHex(int64(targetBits))
+	nonce, _ := utils.IntToHex(int64(_nonce))
 	data := bytes.Join(
 		[][]byte{
 			pow.block.PrevBlockHash,

@@ -1,8 +1,10 @@
-package main
+package cli
 
 import (
 	"fmt"
 	"strconv"
+
+	"github.com/lshtar13/BlockHoldem/blockchain"
 )
 
 func (cli *CLI) printChain() {
@@ -13,7 +15,7 @@ func (cli *CLI) printChain() {
 		fmt.Printf("Prev. hash : %x\n", block.PrevBlockHash)
 		fmt.Printf("Hash: %x\n", block.Hash)
 
-		pow := NewProofOfWork(block)
+		pow := blockchain.NewProofOfWork(block)
 		fmt.Printf("PoW: %s\n", strconv.FormatBool(pow.Validate()))
 		fmt.Println()
 

@@ -1,6 +1,11 @@
-package main
+package blockchain
 
-import "bytes"
+import (
+	"bytes"
+
+	"github.com/lshtar13/BlockHoldem/base58"
+	wlt "github.com/lshtar13/BlockHoldem/wallet"
+)
 
 type TXOutput struct {
 	Value      int
@@ -8,8 +13,8 @@ type TXOutput struct {
 }
 
 func (out *TXOutput) Lock(address []byte) {
-	pubKeyHash := Base58Decode(address)
-	pubKeyHash = pubKeyHash[1 : len(pubKeyHash)-AddressChecksumLen]
+	pubKeyHash := base58.Base58Decode(address)
+	pubKeyHash = pubKeyHash[1 : len(pubKeyHash)-wlt.AddressChecksumLen]
 	out.PubKeyHash = pubKeyHash
 }
 

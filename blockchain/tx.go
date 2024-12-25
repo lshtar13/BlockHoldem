@@ -1,4 +1,4 @@
-package main
+package blockchain
 
 import (
 	"bytes"
@@ -7,6 +7,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+
+	wlt "github.com/lshtar13/BlockHoldem/wallet"
 )
 
 const subsidy = 10
@@ -21,9 +23,9 @@ func NewUTXOTransaction(from, to string, amount int, bc *Blockchain) *Transactio
 	var inputs []TXInput
 	var outputs []TXOutput
 
-	wallets, _ := NewWallets()
+	wallets, _ := wlt.NewWallets()
 	wallet := wallets.GetWallet(from)
-	fromPubKeyHash := HashPubkey(wallet.PublicKey)
+	fromPubKeyHash := wlt.HashPubkey(wallet.PublicKey)
 
 	acc, validOutputs := bc.FindSpendableOutputs(fromPubKeyHash, amount)
 	if acc < amount {

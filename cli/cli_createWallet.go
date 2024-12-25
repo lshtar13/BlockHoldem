@@ -1,9 +1,13 @@
-package main
+package cli
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/lshtar13/BlockHoldem/wallet"
+)
 
 func (cli *CLI) createWallet() {
-	wallets, _ := NewWallets()
+	wallets, _ := wallet.NewWallets()
 	address := wallets.CreateWallet()
 	wallets.SaveToFile()
 
