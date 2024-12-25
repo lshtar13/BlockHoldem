@@ -31,7 +31,7 @@ BlockHoldem
 *.db
 
 # Data file
-*.Data
+*.dat
 
 # Executable
 BlockHoldem
