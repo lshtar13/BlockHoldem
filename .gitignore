@@ -29,3 +29,9 @@ BlockHoldem
 
 # Database file
 *.db
+
+# Data file
+*.Data
+
+# Executable
+BlockHoldem
