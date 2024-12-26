@@ -2,6 +2,8 @@ package blockchain
 
 import (
 	"bytes"
+	"encoding/gob"
+	"log"
 
 	"github.com/lshtar13/BlockHoldem/base58"
 	wlt "github.com/lshtar13/BlockHoldem/wallet"
@@ -27,4 +29,32 @@ func NewTXOutput(amount int, to string) TXOutput {
 	txoutput.Lock([]byte(to))
 
 	return txoutput
+}
+
+type TXOutputs struct {
+	Outputs []TXOutput
+}
+
+func (outs *TXOutputs) Serialize() []byte {
+	var buf bytes.Buffer
+
+	encoder := gob.NewEncoder(&buf)
+	err := encoder.Encode(outs)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return buf.Bytes()
+}
+
+func Deserialize(data []byte) *TXOutputs {
+	outs := TXOutputs{}
+
+	decoder := gob.NewDecoder(bytes.NewReader(data))
+	err := decoder.Decode(&outs)
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return &outs
 }
