@@ -29,7 +29,7 @@ func dbExists() bool {
 	return true
 }
 
-func (bc *Blockchain) MineBlock(txs []*Transaction) error {
+func (bc *Blockchain) MineBlock(txs []*Transaction) *Block {
 	for _, tx := range txs {
 		if !bc.VerifyTransaction(tx) {
 			log.Panic("Error: Invalid transaction")
@@ -60,33 +60,16 @@ func (bc *Blockchain) MineBlock(txs []*Transaction) error {
 
 		return err
 	})
+	if err != nil {
+		log.Panic(err)
+	}
 
-	return err
+	return newBlock
 }
 
 func (bc *Blockchain) Iterator() *BlockchainIterator {
 	return &BlockchainIterator{bc.tip, bc.DB}
 }
-
-// func (bc *Blockchain) FindUTXO(address string) []TXOutput {
-// 	var UTXOs []TXOutput
-
-// 	wallets, _ := wlt.NewWallets()
-// 	wallet := wallets.GetWallet(address)
-// 	pubKeyHash := wlt.HashPubkey(wallet.PublicKey)
-// 	unspentTransactions := bc.FindUnspentTransactions(pubKeyHash)
-
-// 	for _, tx := range unspentTransactions {
-// 		for _, out := range tx.Vout {
-// 			if out.IsLockedWithKey(pubKeyHash) {
-// 				UTXOs = append(UTXOs, out)
-// 			}
-// 		}
-// 	}
-
-// 	return UTXOs
-// }
-
 
 func (bc *Blockchain) FindUTXO() map[string]TXOutputs {
 	UTXO := make(map[string]TXOutputs)
@@ -166,6 +149,10 @@ func (bc *Blockchain) SignTransaction(tx *Transaction, privKey ecdsa.PrivateKey)
 }
 
 func (bc *Blockchain) VerifyTransaction(tx *Transaction) bool {
+	if tx.IsCoinbase() {
+		return true
+	}
+
 	prevTXs := make(map[string]Transaction)
 
 	for _, vin := range tx.Vin {

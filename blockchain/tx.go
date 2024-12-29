@@ -23,7 +23,7 @@ type Transaction struct {
 	Vout []TXOutput
 }
 
-func NewUTXOTransaction(from, to string, amount int, bc *Blockchain) *Transaction {
+func NewUTXOTransaction(from, to string, amount int, utxoset *UTXOSet) *Transaction {
 	var inputs []TXInput
 	var outputs []TXOutput
 
@@ -31,7 +31,7 @@ func NewUTXOTransaction(from, to string, amount int, bc *Blockchain) *Transactio
 	wallet := wallets.GetWallet(from)
 	fromPubKeyHash := wlt.HashPubkey(wallet.PublicKey)
 
-	acc, validOutputs := bc.FindSpendableOutputs(fromPubKeyHash, amount)
+	acc, validOutputs := utxoset.FindSpendableOutputs(fromPubKeyHash, amount)
 	if acc < amount {
 		log.Panic("Error: Not enough funds")
 	}
@@ -55,7 +55,7 @@ func NewUTXOTransaction(from, to string, amount int, bc *Blockchain) *Transactio
 
 	tx := Transaction{nil, inputs, outputs}
 	tx.ID = tx.Hash()
-	bc.SignTransaction(&tx, wallet.PrivateKey)
+	utxoset.Blockchain.SignTransaction(&tx, wallet.PrivateKey)
 
 	return &tx
 }

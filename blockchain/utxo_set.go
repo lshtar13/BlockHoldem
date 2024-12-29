@@ -61,7 +61,7 @@ func (u *UTXOSet) FindSpendableOutputs(pubKeyHash []byte, amount int) (int, map[
 
 		for k, v := c.First(); k != nil; k, v = c.Next() {
 			txID := hex.EncodeToString(k)
-			outs := Deserialize(v)
+			outs := DeserializeOutputs(v)
 
 			for outIdx, out := range outs.Outputs {
 				if out.IsLockedWithKey(pubKeyHash) && accumulated < amount {
@@ -81,5 +81,79 @@ func (u *UTXOSet) FindSpendableOutputs(pubKeyHash []byte, amount int) (int, map[
 }
 
 func (u *UTXOSet) FindUTXO(pubKeyHash []byte) []TXOutput {
-	//hererer
+	var UTXOs []TXOutput
+	db := u.Blockchain.DB
+
+	err := db.View(func(tx *bolt.Tx) error {
+		b := tx.Bucket([]byte(utxoBucket))
+		c := b.Cursor()
+
+		for k, v := c.First(); k != nil; k, v = c.Next() {
+			outs := DeserializeOutputs(v)
+
+			for _, out := range outs.Outputs {
+				if out.IsLockedWithKey(pubKeyHash) {
+					UTXOs = append(UTXOs, out)
+				}
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return UTXOs
+}
+
+func (u *UTXOSet) Update(block *Block) {
+	db := u.Blockchain.DB
+
+	err := db.Update(func(btx *bolt.Tx) error {
+		var err error
+		b := btx.Bucket([]byte(utxoBucket))
+
+		for _, tx := range block.Transactions {
+			if tx.IsCoinbase() {
+				goto VOUT
+			}
+
+			for _, vin := range tx.Vin {
+				updatedOuts := TXOutputs{}
+				outsBytes := b.Get(vin.Txid)
+				outs := DeserializeOutputs(outsBytes)
+
+				for outIdx, out := range outs.Outputs {
+					if outIdx != vin.Vout {
+						updatedOuts.Outputs = append(updatedOuts.Outputs, out)
+					}
+				}
+
+				if len(updatedOuts.Outputs) == 0 {
+					err = b.Delete(vin.Txid)
+				} else {
+					err = b.Put(vin.Txid, updatedOuts.Serialize())
+				}
+				if err != nil {
+					return err
+				}
+			}
+		VOUT:
+			newOutputs := TXOutputs{}
+			newOutputs.Outputs = append(newOutputs.Outputs, tx.Vout...)
+
+			err = b.Put(tx.ID, newOutputs.Serialize())
+			if err != nil {
+				return err
+			}
+		}
+
+		return nil
+	})
+
+	if err != nil {
+		log.Panic(err)
+	}
 }
