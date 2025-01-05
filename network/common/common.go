@@ -1,4 +1,4 @@
-package network
+package common
 
 import (
 	"bytes"
@@ -7,7 +7,14 @@ import (
 	"log"
 )
 
-func gobEncode(data interface{}) []byte {
+const protocol = "tcp"
+const CmdLength = 12
+
+func Protocol() string {
+	return protocol
+}
+
+func GobEncode(data interface{}) []byte {
 	var buff bytes.Buffer
 	encoder := gob.NewEncoder(&buff)
 	err := encoder.Encode(data)
@@ -18,8 +25,8 @@ func gobEncode(data interface{}) []byte {
 	return buff.Bytes()
 }
 
-func command2Bytes(cmd string) []byte {
-	var result [cmdLength]byte
+func Command2Bytes(cmd string) []byte {
+	var result [CmdLength]byte
 
 	for i, c := range cmd {
 		result[i] = byte(c)
@@ -28,7 +35,7 @@ func command2Bytes(cmd string) []byte {
 	return result[:]
 }
 
-func bytes2Command(data []byte) string {
+func Bytes2Command(data []byte) string {
 	var cmd []byte
 
 	for _, b := range data {

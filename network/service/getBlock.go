@@ -1,7 +1,9 @@
-package network
+package service
 
 import (
 	"github.com/lshtar13/BlockHoldem/blockchain"
+	"github.com/lshtar13/BlockHoldem/network/common"
+	"github.com/lshtar13/BlockHoldem/network/node"
 )
 
 type getBlocks struct {
@@ -19,10 +21,10 @@ func (gb *getBlocks) Handle(bc *blockchain.Blockchain) error {
 }
 
 func sendGetBlocks(addr string) error {
-	payload := gobEncode(getBlocks{nodeAddr})
-	req := append(command2Bytes("getBlocks"), payload...)
+	payload := common.GobEncode(getBlocks{node.MySelf()})
+	req := append(common.Command2Bytes("getBlocks"), payload...)
 
-	return sendData(addr, req)
+	return SendData(addr, req)
 }
 
 func NewGetBlocks() *getBlocks {

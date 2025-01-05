@@ -1,20 +1,15 @@
-package network
+package service
 
-import "github.com/lshtar13/BlockHoldem/blockchain"
+import (
+	"github.com/lshtar13/BlockHoldem/blockchain"
+	"github.com/lshtar13/BlockHoldem/network/common"
+	"github.com/lshtar13/BlockHoldem/network/node"
+)
 
 type version struct {
 	Version    int
 	BestHeight int
 	AddrFrom   string
-}
-
-func sendVersion(addr string, bc *blockchain.Blockchain) error {
-	bestHeight := bc.GetBestHeight()
-	payload := gobEncode(version{nodeVersion, bestHeight, nodeAddr})
-
-	request := append(command2Bytes("version"), payload...)
-
-	return sendData(addr, request)
 }
 
 func (ver *version) Handle(bc *blockchain.Blockchain) error {
@@ -32,11 +27,18 @@ func (ver *version) Handle(bc *blockchain.Blockchain) error {
 		return err
 	}
 
-	if !nodeIsKnown(ver.AddrFrom) {
-		knownNodes = append(knownNodes, ver.AddrFrom)
-	}
+	node.Insert(ver.AddrFrom)
 
 	return nil
+}
+
+func sendVersion(addr string, bc *blockchain.Blockchain) error {
+	bestHeight := bc.GetBestHeight()
+	payload := common.GobEncode(version{node.Version(), bestHeight, node.MySelf()})
+
+	request := append(common.Command2Bytes("version"), payload...)
+
+	return SendData(addr, request)
 }
 
 func NewVersion() *version {
