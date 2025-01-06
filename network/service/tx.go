@@ -32,6 +32,6 @@ func sendTx(addr string, t *blockchain.Transaction) error {
 	return SendData(addr, req)
 }
 
-func NewTransaction() *tx {
+func NewTx() *tx {
 	return &tx{}
 }

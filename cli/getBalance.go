@@ -2,6 +2,7 @@ package cli
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/lshtar13/BlockHoldem/base58"
 	"github.com/lshtar13/BlockHoldem/blockchain"
@@ -9,11 +10,13 @@ import (
 )
 
 func (cli *CLI) getBalance(address string) {
-	bc, _ := blockchain.NewBlockchain(address)
+	bc, _ := blockchain.NewBlockchain(cli.nodeID)
 	UTXOSet := blockchain.UTXOSet{Blockchain: bc}
 	defer bc.DB.Close()
 
-	// validation ...
+	if !wallet.ValidateAddress(address) {
+		log.Panic("Wrong address!")
+	}
 
 	balance := 0
 	pubKeyHash := base58.Base58Decode([]byte(address))

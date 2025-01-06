@@ -31,7 +31,7 @@ type WalletMimic struct {
 
 const AddressChecksumLen = 4
 const version = byte(0x00)
-const walletFile = "wallet.dat"
+const walletFile = "wallet_%s.dat"
 
 func NewWallet() *Wallet {
 	private, public := newKeyPair()
@@ -51,12 +51,22 @@ func (w *Wallet) GetAddress() string {
 	pubKeyHash := HashPubkey(w.PublicKey)
 
 	versionedPayload := append([]byte{version}, pubKeyHash...)
-	checksum := checksum(versionedPayload)
+	checksum := calcChecksum(versionedPayload)
 
 	fullPayload := append(versionedPayload, checksum...)
 	address := base58.Base58Encode(fullPayload)
 
 	return string(address)
+}
+
+func ValidateAddress(addr string) bool {
+	decoded := base58.Base58Decode([]byte(addr))
+	tgtCheckSum := getCheckSum(decoded)
+	version := getVersion(decoded)
+	pubKeyHash := getPubKeyHash(decoded)
+	correctCheckSum := calcChecksum(append([]byte{version}, pubKeyHash...))
+
+	return bytes.Equal(tgtCheckSum, correctCheckSum)
 }
 
 func (w *Wallet) MarshalWallet() []byte {
@@ -108,9 +118,21 @@ func HashPubkey(pubKey []byte) []byte {
 	return publicRIPEMD160
 }
 
-func checksum(payload []byte) []byte {
+func calcChecksum(payload []byte) []byte {
 	firstSHA := sha256.Sum256(payload)
 	secondSHA := sha256.Sum256(firstSHA[:])
 
 	return secondSHA[:AddressChecksumLen]
+}
+
+func getCheckSum(payload []byte) []byte {
+	return payload[len(payload)-AddressChecksumLen:]
+}
+
+func getVersion(payload []byte) byte {
+	return payload[0]
+}
+
+func getPubKeyHash(payload []byte) []byte {
+	return payload[1 : len(payload)-AddressChecksumLen]
 }

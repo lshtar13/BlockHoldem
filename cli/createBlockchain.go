@@ -7,8 +7,8 @@ import (
 	"github.com/lshtar13/BlockHoldem/blockchain"
 )
 
-func (cli *CLI) createBlockchain(data string) {
-	bc, err := blockchain.CreateBlockchain(data)
+func (cli *CLI) createBlockchain(address string) {
+	bc, err := blockchain.CreateBlockchain(address, cli.nodeID)
 	defer bc.DB.Close()
 	if err != nil {
 		log.Panic(err)

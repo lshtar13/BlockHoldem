@@ -16,7 +16,8 @@ type Handler interface {
 	Handle(bc *blockchain.Blockchain) error
 }
 
-func Router(conn net.Conn, bc *blockchain.Blockchain) error {
+func Route(conn net.Conn, bc *blockchain.Blockchain) error {
+	defer conn.Close()
 	req, _ := io.ReadAll(conn)
 	cmd := common.Bytes2Command(req[:common.CmdLength])
 	fmt.Printf("Received %s command\n", cmd)
@@ -29,8 +30,14 @@ func Router(conn net.Conn, bc *blockchain.Blockchain) error {
 		payload = service.NewGetBlocks()
 	case "inv":
 		payload = service.NewInv()
+	case "block":
+		payload = service.NewBlock()
+	case "tx":
+		payload = service.NewTx()
+	case "getData":
+		payload = service.NewGetData()
 	default:
-		return fmt.Errorf("Unknown command: %s", cmd)
+		return fmt.Errorf("unknown command: %s", cmd)
 	}
 
 	var err error
@@ -44,8 +51,6 @@ func Router(conn net.Conn, bc *blockchain.Blockchain) error {
 	}
 
 	payload.Handle(bc)
-
-	conn.Close()
 
 	return nil
 }

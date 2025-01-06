@@ -108,6 +108,27 @@ func (u *UTXOSet) FindUTXO(pubKeyHash []byte) []TXOutput {
 	return UTXOs
 }
 
+func (u *UTXOSet) CountTxs() int {
+	db := u.Blockchain.DB
+	cnt := 0
+
+	err := db.View(func(btx *bolt.Tx) error {
+		bucket := btx.Bucket([]byte(utxoBucket))
+		cursor := bucket.Cursor()
+
+		for k, _ := cursor.First(); k != nil; k, _ = cursor.Next() {
+			cnt++
+		}
+
+		return nil
+	})
+	if err != nil {
+		log.Panic(err)
+	}
+
+	return cnt
+}
+
 func (u *UTXOSet) Update(block *Block) {
 	db := u.Blockchain.DB
 

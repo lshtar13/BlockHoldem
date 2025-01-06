@@ -1,9 +1,5 @@
 package service
 
-import (
-	"github.com/lshtar13/BlockHoldem/blockchain"
-)
-
 type transit struct {
 	data   []byte
 	addrTo string
@@ -12,7 +8,7 @@ type transit struct {
 var blockTransitChan chan transit
 var txTransitChan chan transit
 
-func transitBlock(bc *blockchain.Blockchain) {
+func transitBlock() {
 	for t := range blockTransitChan {
 		sendGetData(t.addrTo, "block", t.data)
 	}
@@ -32,9 +28,9 @@ func PutTxTransit(data []byte, addr string) {
 	txTransitChan <- transit{data, addr}
 }
 
-func StartBlockTransit(bc *blockchain.Blockchain) {
+func StartBlockTransit() {
 	blockTransitChan = make(chan transit)
-	transitBlock(bc)
+	transitBlock()
 }
 
 func StartTxTransit() {

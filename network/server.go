@@ -21,10 +21,13 @@ func StartServer(nodeID, minerAddr string) {
 	defer ln.Close()
 
 	bc, err := blockchain.NewBlockchain(nodeID)
+	if err != nil {
+		log.Panic(err)
+	}
 
 	service.PreService(bc)
 
-	service.StartBlockTransit(bc)
+	service.StartBlockTransit()
 	defer service.EndBlockTransit()
 
 	if minerAddr != "" {
@@ -38,7 +41,7 @@ func StartServer(nodeID, minerAddr string) {
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
-			go router.Router(conn, bc)
+			go router.Route(conn, bc)
 		} else {
 			fmt.Printf("Error : %s\n", err)
 		}

@@ -7,9 +7,9 @@ import (
 )
 
 func (cli *CLI) createWallet() {
-	wallets, _ := wallet.NewWallets()
+	wallets, _ := wallet.NewWallets(cli.nodeID)
 	address := wallets.CreateWallet()
-	wallets.SaveToFile()
+	wallets.SaveToFile(cli.nodeID)
 
 	fmt.Println("Your new address: ", address)
 }

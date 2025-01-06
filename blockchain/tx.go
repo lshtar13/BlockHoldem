@@ -23,11 +23,11 @@ type Transaction struct {
 	Vout []TXOutput
 }
 
-func NewUTXOTransaction(from, to string, amount int, utxoset *UTXOSet) *Transaction {
+func NewUTXOTransaction(nodeID, from, to string, amount int, utxoset *UTXOSet) *Transaction {
 	var inputs []TXInput
 	var outputs []TXOutput
 
-	wallets, _ := wlt.NewWallets()
+	wallets, _ := wlt.NewWallets(nodeID)
 	wallet := wallets.GetWallet(from)
 	fromPubKeyHash := wlt.HashPubkey(wallet.PublicKey)
 

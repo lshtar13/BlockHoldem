@@ -3,6 +3,7 @@ package wallet
 import (
 	"bytes"
 	"encoding/gob"
+	"fmt"
 	"log"
 	"os"
 )
@@ -16,7 +17,7 @@ type MarshaledWallets struct {
 	Wallets map[string][]byte
 }
 
-func NewWallets() (*Wallets, error) {
+func NewWallets(nodeID string) (*Wallets, error) {
 	wallets := Wallets{}
 	marshaled := MarshaledWallets{}
 
@@ -24,7 +25,7 @@ func NewWallets() (*Wallets, error) {
 	wallets.Marshaled = &marshaled
 	wallets.Marshaled.Wallets = make(map[string][]byte)
 
-	err := wallets.LoadFromFile()
+	err := wallets.LoadFromFile(nodeID)
 
 	return &wallets, err
 }
@@ -44,7 +45,18 @@ func (ws *Wallets) GetWallet(address string) Wallet {
 	return *ws.Wallets[address]
 }
 
-func (ws *Wallets) LoadFromFile() error {
+func (ws *Wallets) GetAddresses() []string {
+	var addresses []string
+
+	for address := range ws.Wallets {
+		addresses = append(addresses, address)
+	}
+
+	return addresses
+}
+
+func (ws *Wallets) LoadFromFile(nodeID string) error {
+	walletFile := fmt.Sprintf(walletFile, nodeID)
 	if _, err := os.Stat(walletFile); os.IsNotExist(err) {
 		return err
 	}
@@ -67,9 +79,10 @@ func (ws *Wallets) LoadFromFile() error {
 	return nil
 }
 
-func (ws Wallets) SaveToFile() {
+func (ws Wallets) SaveToFile(nodeID string) {
 	var buf bytes.Buffer
 
+	walletFile := fmt.Sprintf(walletFile, nodeID)
 	encoder := gob.NewEncoder(&buf)
 	err := encoder.Encode(*ws.Marshaled)
 	if err != nil {
