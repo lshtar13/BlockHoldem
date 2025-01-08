@@ -19,6 +19,10 @@ func MySelf() string {
 	return nodeAddr
 }
 
+func IsCentral() bool {
+	return nodeAddr == knownNodes[0]
+}
+
 func CentralNode() string {
 	return knownNodes[0]
 }

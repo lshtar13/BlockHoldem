@@ -19,7 +19,7 @@ func (iv *inv) Handle(bc *blockchain.Blockchain) error {
 	switch iv.Type {
 	case "block":
 		for _, item := range iv.Items {
-			PutTxTransit(item, iv.AddrFrom)
+			PutBlockTransit(item, iv.AddrFrom)
 		}
 	case "tx":
 		for _, txID := range iv.Items {
@@ -33,6 +33,7 @@ func (iv *inv) Handle(bc *blockchain.Blockchain) error {
 }
 
 func sendInv(addr string, sort string, items [][]byte) error {
+	fmt.Println("  Sedn Inv...")
 	payload := common.GobEncode(inv{node.MySelf(), sort, items})
 	req := append(common.Command2Bytes("inv"), payload...)
 

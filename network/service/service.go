@@ -22,6 +22,8 @@ func SendData(addr string, data []byte) error {
 	_, err = io.Copy(conn, bytes.NewReader(data))
 	if err != nil {
 		return fmt.Errorf("fail to send")
+	} else {
+		fmt.Printf("send data to %s\n", addr)
 	}
 	return nil
 }
@@ -33,5 +35,9 @@ func BroadCastInv(sort string, disjoint []string, items [][]byte) {
 }
 
 func PreService(bc *blockchain.Blockchain) {
-	sendVersion(node.CentralNode(), bc)
+	fmt.Println("PreService:")
+	if !node.IsCentral() {
+		sendVersion(node.CentralNode(), bc)
+	}
+	fmt.Println("done(Preservice)")
 }

@@ -11,6 +11,7 @@ import (
 	"fmt"
 	"log"
 	"math/big"
+	"strings"
 
 	wlt "github.com/lshtar13/BlockHoldem/wallet"
 )
@@ -21,6 +22,20 @@ type Transaction struct {
 	ID   []byte
 	Vin  []TXInput
 	Vout []TXOutput
+}
+
+func (tx *Transaction) Print(nindent int) {
+	indent := strings.Repeat(" ", nindent)
+	fmt.Printf("%sID : %x\n", indent, tx.ID)
+	fmt.Printf("%sVin : \n", indent)
+	for _, vin := range tx.Vin {
+		vin.Print(nindent * 2)
+	}
+
+	fmt.Printf("%sVout : \n", indent)
+	for _, out := range tx.Vout {
+		out.Print(nindent * 2)
+	}
 }
 
 func NewUTXOTransaction(nodeID, from, to string, amount int, utxoset *UTXOSet) *Transaction {

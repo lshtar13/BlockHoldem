@@ -2,6 +2,8 @@ package service
 
 import (
 	"encoding/hex"
+	"fmt"
+	"log"
 
 	"github.com/lshtar13/BlockHoldem/blockchain"
 	"github.com/lshtar13/BlockHoldem/network/common"
@@ -15,12 +17,14 @@ type getData struct {
 }
 
 func (gd *getData) Handle(bc *blockchain.Blockchain) error {
+	fmt.Printf("  Handling getData %s\n", gd.Type)
 	switch gd.Type {
 	case "block":
 		block, err := bc.GetBlock([]byte(gd.ID))
 		if err != nil {
-			sendBlock(gd.AddrFrom, block)
+			log.Panic(err)
 		}
+		sendBlock(gd.AddrFrom, block)
 	case "tx":
 		txID := hex.EncodeToString(gd.ID)
 		tx := GetTx(txID)
@@ -32,7 +36,8 @@ func (gd *getData) Handle(bc *blockchain.Blockchain) error {
 }
 
 func sendGetData(addr string, sort string, id []byte) error {
-	payload := common.GobEncode(getBlocks{node.MySelf()})
+	fmt.Println("  Sedn GetData...")
+	payload := common.GobEncode(getData{node.MySelf(), sort, id})
 	req := append(common.Command2Bytes("getData"), payload...)
 
 	return SendData(addr, req)

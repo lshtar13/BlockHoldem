@@ -3,6 +3,7 @@ package blockchain
 import (
 	"bytes"
 	"encoding/gob"
+	"fmt"
 	"log"
 	"time"
 )
@@ -16,6 +17,17 @@ type Block struct {
 	Hash          []byte
 	Nonce         int
 	Height        int
+}
+
+func (b *Block) Print() {
+	fmt.Printf("============ Block %x ============\n", b.Hash)
+	fmt.Printf("Height: %d\n", b.Height)
+	fmt.Printf("Nonce: %d\n", b.Nonce)
+	fmt.Printf("Prev. block: %x\n", b.PrevBlockHash)
+	fmt.Println("Transactions : ")
+	for _, t := range b.Transactions {
+		t.Print(2)
+	}
 }
 
 func (b *Block) HashTransactions() []byte {

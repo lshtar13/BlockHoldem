@@ -30,12 +30,12 @@ func PutTxTransit(data []byte, addr string) {
 
 func StartBlockTransit() {
 	blockTransitChan = make(chan transit)
-	transitBlock()
+	go transitBlock()
 }
 
 func StartTxTransit() {
 	txTransitChan = make(chan transit)
-	transitTx()
+	go transitTx()
 }
 
 func EndBlockTransit() {

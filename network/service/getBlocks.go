@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/lshtar13/BlockHoldem/blockchain"
 	"github.com/lshtar13/BlockHoldem/network/common"
 	"github.com/lshtar13/BlockHoldem/network/node"
@@ -21,6 +23,7 @@ func (gb *getBlocks) Handle(bc *blockchain.Blockchain) error {
 }
 
 func sendGetBlocks(addr string) error {
+	fmt.Println("  Send GetBlocks...")
 	payload := common.GobEncode(getBlocks{node.MySelf()})
 	req := append(common.Command2Bytes("getBlocks"), payload...)
 

@@ -14,6 +14,7 @@ import (
 
 func StartServer(nodeID, minerAddr string) {
 	node.SetNodeAddr(nodeID)
+	fmt.Printf("Address : %s\n", node.MySelf())
 	ln, err := net.Listen(common.Protocol(), node.MySelf())
 	if err != nil {
 		log.Panic(err)
@@ -29,21 +30,26 @@ func StartServer(nodeID, minerAddr string) {
 
 	service.StartBlockTransit()
 	defer service.EndBlockTransit()
+	fmt.Println("Start Block Transit!")
 
 	if minerAddr != "" {
 		service.StartTxTransit()
 		defer service.EndTxTransit()
+		fmt.Println("Start Tx Transit!")
 
 		service.StartMining(minerAddr, bc)
 		defer service.EndMining()
+		fmt.Println("Start Mining!")
 	}
 
+	// herererer : verbose!
+	fmt.Printf("Start Server! : %s\n", ln.Addr().String())
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
-			go router.Route(conn, bc)
-		} else {
 			fmt.Printf("Error : %s\n", err)
+		} else {
+			go router.Route(conn, bc)
 		}
 	}
 }

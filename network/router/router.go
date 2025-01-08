@@ -43,9 +43,10 @@ func Route(conn net.Conn, bc *blockchain.Blockchain) error {
 	var err error
 	var buf bytes.Buffer
 
+	fmt.Println("  Decoding ...")
 	buf.Write(req[common.CmdLength:])
 	dec := gob.NewDecoder(&buf)
-	err = dec.Decode(&payload)
+	err = dec.Decode(payload)
 	if err != nil {
 		return err
 	}

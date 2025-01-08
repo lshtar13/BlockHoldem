@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/lshtar13/BlockHoldem/blockchain"
 	"github.com/lshtar13/BlockHoldem/network/common"
 	"github.com/lshtar13/BlockHoldem/network/node"
@@ -13,6 +15,7 @@ type version struct {
 }
 
 func (ver *version) Handle(bc *blockchain.Blockchain) error {
+	fmt.Println("  Handling Version ...")
 	var err error
 	myBestHeight := bc.GetBestHeight()
 	hisBestHeight := ver.BestHeight
@@ -33,6 +36,7 @@ func (ver *version) Handle(bc *blockchain.Blockchain) error {
 }
 
 func sendVersion(addr string, bc *blockchain.Blockchain) error {
+	fmt.Println("  Send Version ...")
 	bestHeight := bc.GetBestHeight()
 	payload := common.GobEncode(version{node.Version(), bestHeight, node.MySelf()})
 

@@ -3,7 +3,9 @@ package blockchain
 import (
 	"bytes"
 	"encoding/gob"
+	"fmt"
 	"log"
+	"strings"
 
 	"github.com/lshtar13/BlockHoldem/base58"
 	wlt "github.com/lshtar13/BlockHoldem/wallet"
@@ -12,6 +14,12 @@ import (
 type TXOutput struct {
 	Value      int
 	PubKeyHash []byte
+}
+
+func (out *TXOutput) Print(nindent int) {
+	indent := strings.Repeat(" ", nindent)
+	fmt.Printf("%sValue : %d\n", indent, out.Value)
+	fmt.Printf("%sPubKeyHash : %x\n", indent, out.PubKeyHash)
 }
 
 func (out *TXOutput) Lock(address []byte) {

@@ -1,6 +1,8 @@
 package service
 
 import (
+	"fmt"
+
 	"github.com/lshtar13/BlockHoldem/blockchain"
 	"github.com/lshtar13/BlockHoldem/network/common"
 	"github.com/lshtar13/BlockHoldem/network/node"
@@ -25,6 +27,7 @@ func (t *tx) Handle(bc *blockchain.Blockchain) error {
 }
 
 func sendTx(addr string, t *blockchain.Transaction) error {
+	fmt.Println("  Send Tx...")
 	data := tx{node.MySelf(), t.Serialize()}
 	payload := common.GobEncode(data)
 	req := append(common.Command2Bytes("tx"), payload...)

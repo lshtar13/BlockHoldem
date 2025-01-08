@@ -2,6 +2,7 @@ package blockchain
 
 import (
 	"encoding/hex"
+	"fmt"
 	"log"
 
 	"github.com/boltdb/bolt"
@@ -144,6 +145,8 @@ func (u *UTXOSet) Update(block *Block) {
 			for _, vin := range tx.Vin {
 				updatedOuts := TXOutputs{}
 				outsBytes := b.Get(vin.Txid)
+				fmt.Printf("TxId : %x\n", vin.Txid)
+				fmt.Printf("outsBytes : %x, %d\n", outsBytes, len(outsBytes))
 				outs := DeserializeOutputs(outsBytes)
 
 				for outIdx, out := range outs.Outputs {
@@ -152,11 +155,7 @@ func (u *UTXOSet) Update(block *Block) {
 					}
 				}
 
-				if len(updatedOuts.Outputs) == 0 {
-					err = b.Delete(vin.Txid)
-				} else {
-					err = b.Put(vin.Txid, updatedOuts.Serialize())
-				}
+				err = b.Put(vin.Txid, updatedOuts.Serialize())
 				if err != nil {
 					return err
 				}

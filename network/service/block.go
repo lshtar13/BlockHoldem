@@ -18,10 +18,11 @@ func (blk *block) Handle(bc *blockchain.Blockchain) error {
 	if err != nil {
 		return err
 	}
-	fmt.Println("Recevied a new block!")
+	fmt.Printf("Recevied a new block! %x\n", b.Hash)
 	err = bc.AddBlock(b)
 	if err == nil {
 		utxoSet := blockchain.UTXOSet{Blockchain: bc}
+		// b.Print()
 		utxoSet.Update(b)
 		fmt.Printf("Added block %x\n", b.Hash)
 	}
@@ -30,6 +31,7 @@ func (blk *block) Handle(bc *blockchain.Blockchain) error {
 }
 
 func sendBlock(addr string, b *blockchain.Block) error {
+	fmt.Printf("  Send Block : %x\n", b.Hash)
 	data := block{node.MySelf(), b.Serialize()}
 	payload := common.GobEncode(data)
 	req := append(common.Command2Bytes("block"), payload...)
