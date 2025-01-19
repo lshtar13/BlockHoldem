@@ -6,11 +6,16 @@ package rpc;
 
 service InvSrv { rpc ReqInv(InvReq) returns (InvRet); }
 
+enum InvType {
+  BlkInv = 0;
+  TxInv = 1;
+}
+
 message InvReq {}
 
 message InvRet { repeated Inv invs = 1; }
 
 message Inv {
-  string type = 1;
+  InvType type = 1;
   bytes hash = 2;
 }

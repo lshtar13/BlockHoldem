@@ -4,7 +4,7 @@ option go_package = "./rpc";
 
 package rpc;
 
-service TxSrc { rpc ReqTx(TxReq) returns (stream Tx); }
+service TxSrv { rpc ReqTx(TxReq) returns (stream Tx); }
 
 message TxReq { repeated bytes hash = 1; }
 

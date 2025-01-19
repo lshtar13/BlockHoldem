@@ -35,3 +35,21 @@ func newTx(tx *chain.Transaction) *Tx {
 		Vout: vout,
 	}
 }
+
+type TxSrv struct {
+	UnimplementedTxSrvServer
+	bc *chain.Blockchain
+}
+
+func (srv *TxSrv) ReqTx(req TxReq, stream TxSrv_ReqTxClient) error {
+	for _, hash := range req.Hash {
+		tx, err := srv.bc.FindTransaction(hash)
+		if err != nil {
+			continue
+		}
+
+		stream <- newTx(&tx)
+	}
+
+	return nil
+}

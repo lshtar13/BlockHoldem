@@ -19,27 +19,27 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	TxSrc_ReqTx_FullMethodName = "/rpc.TxSrc/ReqTx"
+	TxSrv_ReqTx_FullMethodName = "/rpc.TxSrv/ReqTx"
 )
 
-// TxSrcClient is the client API for TxSrc service.
+// TxSrvClient is the client API for TxSrv service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type TxSrcClient interface {
+type TxSrvClient interface {
 	ReqTx(ctx context.Context, in *TxReq, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Tx], error)
 }
 
-type txSrcClient struct {
+type txSrvClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewTxSrcClient(cc grpc.ClientConnInterface) TxSrcClient {
-	return &txSrcClient{cc}
+func NewTxSrvClient(cc grpc.ClientConnInterface) TxSrvClient {
+	return &txSrvClient{cc}
 }
 
-func (c *txSrcClient) ReqTx(ctx context.Context, in *TxReq, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Tx], error) {
+func (c *txSrvClient) ReqTx(ctx context.Context, in *TxReq, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Tx], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	stream, err := c.cc.NewStream(ctx, &TxSrc_ServiceDesc.Streams[0], TxSrc_ReqTx_FullMethodName, cOpts...)
+	stream, err := c.cc.NewStream(ctx, &TxSrv_ServiceDesc.Streams[0], TxSrv_ReqTx_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -54,69 +54,69 @@ func (c *txSrcClient) ReqTx(ctx context.Context, in *TxReq, opts ...grpc.CallOpt
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type TxSrc_ReqTxClient = grpc.ServerStreamingClient[Tx]
+type TxSrv_ReqTxClient = grpc.ServerStreamingClient[Tx]
 
-// TxSrcServer is the server API for TxSrc service.
-// All implementations must embed UnimplementedTxSrcServer
+// TxSrvServer is the server API for TxSrv service.
+// All implementations must embed UnimplementedTxSrvServer
 // for forward compatibility.
-type TxSrcServer interface {
+type TxSrvServer interface {
 	ReqTx(*TxReq, grpc.ServerStreamingServer[Tx]) error
-	mustEmbedUnimplementedTxSrcServer()
+	mustEmbedUnimplementedTxSrvServer()
 }
 
-// UnimplementedTxSrcServer must be embedded to have
+// UnimplementedTxSrvServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedTxSrcServer struct{}
+type UnimplementedTxSrvServer struct{}
 
-func (UnimplementedTxSrcServer) ReqTx(*TxReq, grpc.ServerStreamingServer[Tx]) error {
+func (UnimplementedTxSrvServer) ReqTx(*TxReq, grpc.ServerStreamingServer[Tx]) error {
 	return status.Errorf(codes.Unimplemented, "method ReqTx not implemented")
 }
-func (UnimplementedTxSrcServer) mustEmbedUnimplementedTxSrcServer() {}
-func (UnimplementedTxSrcServer) testEmbeddedByValue()               {}
+func (UnimplementedTxSrvServer) mustEmbedUnimplementedTxSrvServer() {}
+func (UnimplementedTxSrvServer) testEmbeddedByValue()               {}
 
-// UnsafeTxSrcServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to TxSrcServer will
+// UnsafeTxSrvServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to TxSrvServer will
 // result in compilation errors.
-type UnsafeTxSrcServer interface {
-	mustEmbedUnimplementedTxSrcServer()
+type UnsafeTxSrvServer interface {
+	mustEmbedUnimplementedTxSrvServer()
 }
 
-func RegisterTxSrcServer(s grpc.ServiceRegistrar, srv TxSrcServer) {
-	// If the following call pancis, it indicates UnimplementedTxSrcServer was
+func RegisterTxSrvServer(s grpc.ServiceRegistrar, srv TxSrvServer) {
+	// If the following call pancis, it indicates UnimplementedTxSrvServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&TxSrc_ServiceDesc, srv)
+	s.RegisterService(&TxSrv_ServiceDesc, srv)
 }
 
-func _TxSrc_ReqTx_Handler(srv interface{}, stream grpc.ServerStream) error {
+func _TxSrv_ReqTx_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(TxReq)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(TxSrcServer).ReqTx(m, &grpc.GenericServerStream[TxReq, Tx]{ServerStream: stream})
+	return srv.(TxSrvServer).ReqTx(m, &grpc.GenericServerStream[TxReq, Tx]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type TxSrc_ReqTxServer = grpc.ServerStreamingServer[Tx]
+type TxSrv_ReqTxServer = grpc.ServerStreamingServer[Tx]
 
-// TxSrc_ServiceDesc is the grpc.ServiceDesc for TxSrc service.
+// TxSrv_ServiceDesc is the grpc.ServiceDesc for TxSrv service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var TxSrc_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "rpc.TxSrc",
-	HandlerType: (*TxSrcServer)(nil),
+var TxSrv_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "rpc.TxSrv",
+	HandlerType: (*TxSrvServer)(nil),
 	Methods:     []grpc.MethodDesc{},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "ReqTx",
-			Handler:       _TxSrc_ReqTx_Handler,
+			Handler:       _TxSrv_ReqTx_Handler,
 			ServerStreams: true,
 		},
 	},

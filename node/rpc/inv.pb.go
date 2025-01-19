@@ -20,6 +20,52 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type InvType int32
+
+const (
+	InvType_BlkInv InvType = 0
+	InvType_TxInv  InvType = 1
+)
+
+// Enum value maps for InvType.
+var (
+	InvType_name = map[int32]string{
+		0: "BlkInv",
+		1: "TxInv",
+	}
+	InvType_value = map[string]int32{
+		"BlkInv": 0,
+		"TxInv":  1,
+	}
+)
+
+func (x InvType) Enum() *InvType {
+	p := new(InvType)
+	*p = x
+	return p
+}
+
+func (x InvType) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (InvType) Descriptor() protoreflect.EnumDescriptor {
+	return file_inv_proto_enumTypes[0].Descriptor()
+}
+
+func (InvType) Type() protoreflect.EnumType {
+	return &file_inv_proto_enumTypes[0]
+}
+
+func (x InvType) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use InvType.Descriptor instead.
+func (InvType) EnumDescriptor() ([]byte, []int) {
+	return file_inv_proto_rawDescGZIP(), []int{0}
+}
+
 type InvReq struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	unknownFields protoimpl.UnknownFields
@@ -102,7 +148,7 @@ func (x *InvRet) GetInvs() []*Inv {
 
 type Inv struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Type          string                 `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Type          InvType                `protobuf:"varint,1,opt,name=type,proto3,enum=rpc.InvType" json:"type,omitempty"`
 	Hash          []byte                 `protobuf:"bytes,2,opt,name=hash,proto3" json:"hash,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -138,11 +184,11 @@ func (*Inv) Descriptor() ([]byte, []int) {
 	return file_inv_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *Inv) GetType() string {
+func (x *Inv) GetType() InvType {
 	if x != nil {
 		return x.Type
 	}
-	return ""
+	return InvType_BlkInv
 }
 
 func (x *Inv) GetHash() []byte {
@@ -159,10 +205,13 @@ var file_inv_proto_rawDesc = []byte{
 	0x22, 0x08, 0x0a, 0x06, 0x49, 0x6e, 0x76, 0x52, 0x65, 0x71, 0x22, 0x26, 0x0a, 0x06, 0x49, 0x6e,
 	0x76, 0x52, 0x65, 0x74, 0x12, 0x1c, 0x0a, 0x04, 0x69, 0x6e, 0x76, 0x73, 0x18, 0x01, 0x20, 0x03,
 	0x28, 0x0b, 0x32, 0x08, 0x2e, 0x72, 0x70, 0x63, 0x2e, 0x49, 0x6e, 0x76, 0x52, 0x04, 0x69, 0x6e,
-	0x76, 0x73, 0x22, 0x2d, 0x0a, 0x03, 0x49, 0x6e, 0x76, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70,
-	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x12, 0x0a,
-	0x04, 0x68, 0x61, 0x73, 0x68, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x68, 0x61, 0x73,
-	0x68, 0x32, 0x2c, 0x0a, 0x06, 0x49, 0x6e, 0x76, 0x53, 0x72, 0x76, 0x12, 0x22, 0x0a, 0x06, 0x52,
+	0x76, 0x73, 0x22, 0x3b, 0x0a, 0x03, 0x49, 0x6e, 0x76, 0x12, 0x20, 0x0a, 0x04, 0x74, 0x79, 0x70,
+	0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x0c, 0x2e, 0x72, 0x70, 0x63, 0x2e, 0x49, 0x6e,
+	0x76, 0x54, 0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x68,
+	0x61, 0x73, 0x68, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x68, 0x61, 0x73, 0x68, 0x2a,
+	0x20, 0x0a, 0x07, 0x49, 0x6e, 0x76, 0x54, 0x79, 0x70, 0x65, 0x12, 0x0a, 0x0a, 0x06, 0x42, 0x6c,
+	0x6b, 0x49, 0x6e, 0x76, 0x10, 0x00, 0x12, 0x09, 0x0a, 0x05, 0x54, 0x78, 0x49, 0x6e, 0x76, 0x10,
+	0x01, 0x32, 0x2c, 0x0a, 0x06, 0x49, 0x6e, 0x76, 0x53, 0x72, 0x76, 0x12, 0x22, 0x0a, 0x06, 0x52,
 	0x65, 0x71, 0x49, 0x6e, 0x76, 0x12, 0x0b, 0x2e, 0x72, 0x70, 0x63, 0x2e, 0x49, 0x6e, 0x76, 0x52,
 	0x65, 0x71, 0x1a, 0x0b, 0x2e, 0x72, 0x70, 0x63, 0x2e, 0x49, 0x6e, 0x76, 0x52, 0x65, 0x74, 0x42,
 	0x07, 0x5a, 0x05, 0x2e, 0x2f, 0x72, 0x70, 0x63, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
@@ -180,21 +229,24 @@ func file_inv_proto_rawDescGZIP() []byte {
 	return file_inv_proto_rawDescData
 }
 
+var file_inv_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_inv_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_inv_proto_goTypes = []any{
-	(*InvReq)(nil), // 0: rpc.InvReq
-	(*InvRet)(nil), // 1: rpc.InvRet
-	(*Inv)(nil),    // 2: rpc.Inv
+	(InvType)(0),   // 0: rpc.InvType
+	(*InvReq)(nil), // 1: rpc.InvReq
+	(*InvRet)(nil), // 2: rpc.InvRet
+	(*Inv)(nil),    // 3: rpc.Inv
 }
 var file_inv_proto_depIdxs = []int32{
-	2, // 0: rpc.InvRet.invs:type_name -> rpc.Inv
-	0, // 1: rpc.InvSrv.ReqInv:input_type -> rpc.InvReq
-	1, // 2: rpc.InvSrv.ReqInv:output_type -> rpc.InvRet
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	3, // 0: rpc.InvRet.invs:type_name -> rpc.Inv
+	0, // 1: rpc.Inv.type:type_name -> rpc.InvType
+	1, // 2: rpc.InvSrv.ReqInv:input_type -> rpc.InvReq
+	2, // 3: rpc.InvSrv.ReqInv:output_type -> rpc.InvRet
+	3, // [3:4] is the sub-list for method output_type
+	2, // [2:3] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_inv_proto_init() }
@@ -207,13 +259,14 @@ func file_inv_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_inv_proto_rawDesc,
-			NumEnums:      0,
+			NumEnums:      1,
 			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_inv_proto_goTypes,
 		DependencyIndexes: file_inv_proto_depIdxs,
+		EnumInfos:         file_inv_proto_enumTypes,
 		MessageInfos:      file_inv_proto_msgTypes,
 	}.Build()
 	File_inv_proto = out.File

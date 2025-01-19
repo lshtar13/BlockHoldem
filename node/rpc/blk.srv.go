@@ -1,8 +1,6 @@
 package rpc
 
 import (
-	"log"
-
 	"github.com/lshtar13/blockchain/chain"
 )
 
@@ -30,9 +28,11 @@ func (srv *BlkSrv) ReqBlk(req *BlkReq, stream BlkSrv_ReqBlkServer) error {
 	for _, hash := range req.Hash {
 		_blk, err := srv.bc.GetBlock(hash)
 		if err != nil {
-			log.Fatalf("no such blk, %x\n", err)
+			continue
 		}
 
 		stream <- newBlk(_blk)
 	}
+
+	return nil
 }

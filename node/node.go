@@ -5,5 +5,7 @@ import (
 	_ "github.com/lshtar13/blockchain/node/rpc"
 )
 
+var Addr string
+
 func main() {
 }

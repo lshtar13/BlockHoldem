@@ -4,14 +4,15 @@ option go_package = "./rpc";
 
 package rpc;
 
-service versSrv { rpc ReqVers(versReq) returns (versRet); }
+service versSrv { rpc ReqVers(VersReq) returns (VersRet); }
 
-message versReq {
-  int64 Version = 1;
-  int64 BestHeight = 2;
+message VersReq {
+  string addr = 1;
+  int64 Version = 2;
+  int64 BestHeight = 3;
 }
 
-message versRet {
+message VersRet {
   int64 Version = 1;
   int64 BestHeight = 2;
 }
