@@ -1,0 +1,9 @@
+{
+    "protoc": {
+        "editor.formatOnSave": true,
+        "compile_on_save": true,
+        "options": [
+            "--proto_path=${workspaceRoot}/node/rpc --go_out=${workspaceRoot}/node/rpc --go_opt=paths=source_relative  --go-grpc_out=${workspaceRoot}/node/rpc --go-grpc_opt=paths=source_relative",
+        ]
+    },
+}
