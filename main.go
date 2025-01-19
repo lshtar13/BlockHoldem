@@ -1,6 +1,6 @@
 package main
 
-import "github.com/lshtar13/BlockHoldem/cli"
+import "github.com/lshtar13/blockchain/cli"
 
 func main() {
 	cli := cli.CLI{}

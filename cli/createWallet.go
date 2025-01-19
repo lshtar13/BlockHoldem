@@ -3,7 +3,7 @@ package cli
 import (
 	"fmt"
 
-	"github.com/lshtar13/BlockHoldem/wallet"
+	"github.com/lshtar13/blockchain/wallet"
 )
 
 func (cli *CLI) createWallet() {

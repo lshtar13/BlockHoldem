@@ -6,12 +6,12 @@ import (
 	"os"
 	"strconv"
 
-	"github.com/lshtar13/BlockHoldem/blockchain"
+	"github.com/lshtar13/blockchain/chain"
 )
 
 type CLI struct {
 	nodeID string
-	bc     *blockchain.Blockchain
+	bc     *chain.Blockchain
 }
 
 func (cli *CLI) printUsage() {

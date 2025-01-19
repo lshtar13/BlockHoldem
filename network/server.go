@@ -5,11 +5,11 @@ import (
 	"log"
 	"net"
 
-	"github.com/lshtar13/BlockHoldem/blockchain"
-	"github.com/lshtar13/BlockHoldem/network/common"
-	"github.com/lshtar13/BlockHoldem/network/node"
-	"github.com/lshtar13/BlockHoldem/network/router"
-	"github.com/lshtar13/BlockHoldem/network/service"
+	"github.com/lshtar13/blockchain/blockchain"
+	"github.com/lshtar13/blockchain/network/common"
+	"github.com/lshtar13/blockchain/network/node"
+	"github.com/lshtar13/blockchain/network/router"
+	"github.com/lshtar13/blockchain/network/service"
 )
 
 func StartServer(nodeID, minerAddr string) {

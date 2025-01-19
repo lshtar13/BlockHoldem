@@ -7,9 +7,9 @@ import (
 	"io"
 	"net"
 
-	"github.com/lshtar13/BlockHoldem/blockchain"
-	"github.com/lshtar13/BlockHoldem/network/common"
-	"github.com/lshtar13/BlockHoldem/network/service"
+	"github.com/lshtar13/blockchain/blockchain"
+	"github.com/lshtar13/blockchain/network/common"
+	"github.com/lshtar13/blockchain/network/service"
 )
 
 type Handler interface {

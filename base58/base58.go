@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"math/big"
 
-	"github.com/lshtar13/BlockHoldem/utils"
+	"github.com/lshtar13/blockchain/utils"
 )
 
 var b58Alphabet = []byte("123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz")

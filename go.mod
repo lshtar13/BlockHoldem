@@ -1,4 +1,4 @@
-module github.com/lshtar13/BlockHoldem
+module github.com/lshtar13/blockchain
 
 go 1.23.4
 

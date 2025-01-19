@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lshtar13/BlockHoldem/network"
-	"github.com/lshtar13/BlockHoldem/wallet"
+	"github.com/lshtar13/blockchain/network"
+	"github.com/lshtar13/blockchain/wallet"
 )
 
 func (cli *CLI) startNode(minerAddr string) {

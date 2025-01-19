@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lshtar13/BlockHoldem/blockchain"
+	"github.com/lshtar13/blockchain/chain"
 )
 
 func (cli *CLI) printChain() {
-	bc, err := blockchain.NewBlockchain(cli.nodeID)
+	bc, err := chain.NewBlockchain(cli.nodeID)
 	if err != nil {
 		log.Panic(err)
 	}

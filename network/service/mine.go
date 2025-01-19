@@ -3,8 +3,8 @@ package service
 import (
 	"encoding/hex"
 
-	"github.com/lshtar13/BlockHoldem/blockchain"
-	"github.com/lshtar13/BlockHoldem/network/node"
+	"github.com/lshtar13/blockchain/blockchain"
+	"github.com/lshtar13/blockchain/network/node"
 )
 
 var MiningAddr string

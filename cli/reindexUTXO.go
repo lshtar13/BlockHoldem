@@ -3,15 +3,15 @@ package cli
 import (
 	"log"
 
-	"github.com/lshtar13/BlockHoldem/blockchain"
+	"github.com/lshtar13/blockchain/chain"
 )
 
 func (cli *CLI) reindexUTXO() {
-	bc, err := blockchain.NewBlockchain(cli.nodeID)
+	bc, err := chain.NewBlockchain(cli.nodeID)
 	if err != nil {
 		log.Panic(err)
 	}
 
-	UTXOset := blockchain.UTXOSet{Blockchain: bc}
+	UTXOset := chain.UTXOSet{Blockchain: bc}
 	UTXOset.Reindex()
 }

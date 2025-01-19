@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lshtar13/BlockHoldem/blockchain"
-	"github.com/lshtar13/BlockHoldem/network/common"
-	"github.com/lshtar13/BlockHoldem/network/node"
+	"github.com/lshtar13/blockchain/blockchain"
+	"github.com/lshtar13/blockchain/network/common"
+	"github.com/lshtar13/blockchain/network/node"
 )
 
 type getData struct {

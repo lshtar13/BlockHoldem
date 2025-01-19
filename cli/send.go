@@ -3,17 +3,17 @@ package cli
 import (
 	"fmt"
 
-	"github.com/lshtar13/BlockHoldem/blockchain"
+	"github.com/lshtar13/blockchain/chain"
 )
 
 func (cli *CLI) send(from, to string, amount int) {
-	bc, _ := blockchain.NewBlockchain(cli.nodeID)
-	utxoset := blockchain.UTXOSet{Blockchain: bc}
+	bc, _ := chain.NewBlockchain(cli.nodeID)
+	utxoset := chain.UTXOSet{Blockchain: bc}
 	defer bc.DB.Close()
 
-	tx := blockchain.NewUTXOTransaction(cli.nodeID, from, to, amount, &utxoset)
-	cbTx := blockchain.NewCoinbaseTX(from, "")
-	block := bc.MineBlock([]*blockchain.Transaction{cbTx, tx})
+	tx := chain.NewUTXOTransaction(cli.nodeID, from, to, amount, &utxoset)
+	cbTx := chain.NewCoinbaseTX(from, "")
+	block := bc.MineBlock([]*chain.Transaction{cbTx, tx})
 	utxoset.Update(block)
 
 	fmt.Println("Success!")

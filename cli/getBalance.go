@@ -4,14 +4,14 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lshtar13/BlockHoldem/base58"
-	"github.com/lshtar13/BlockHoldem/blockchain"
-	"github.com/lshtar13/BlockHoldem/wallet"
+	"github.com/lshtar13/blockchain/base58"
+	"github.com/lshtar13/blockchain/chain"
+	"github.com/lshtar13/blockchain/wallet"
 )
 
 func (cli *CLI) getBalance(address string) {
-	bc, _ := blockchain.NewBlockchain(cli.nodeID)
-	UTXOSet := blockchain.UTXOSet{Blockchain: bc}
+	bc, _ := chain.NewBlockchain(cli.nodeID)
+	UTXOSet := chain.UTXOSet{Blockchain: bc}
 	defer bc.DB.Close()
 
 	if !wallet.ValidateAddress(address) {

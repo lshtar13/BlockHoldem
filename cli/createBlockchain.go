@@ -4,17 +4,17 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lshtar13/BlockHoldem/blockchain"
+	"github.com/lshtar13/blockchain/chain"
 )
 
 func (cli *CLI) createBlockchain(address string) {
-	bc, err := blockchain.CreateBlockchain(address, cli.nodeID)
+	bc, err := chain.CreateBlockchain(address, cli.nodeID)
 	defer bc.DB.Close()
 	if err != nil {
 		log.Panic(err)
 	}
 
-	UTXOSet := blockchain.UTXOSet{Blockchain: bc}
+	UTXOSet := chain.UTXOSet{Blockchain: bc}
 	UTXOSet.Reindex()
 
 	cli.bc = bc

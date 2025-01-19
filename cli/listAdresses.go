@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lshtar13/BlockHoldem/wallet"
+	"github.com/lshtar13/blockchain/wallet"
 )
 
 func (cli *CLI) listAddresses() {

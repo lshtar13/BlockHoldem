@@ -10,7 +10,7 @@ import (
 	"log"
 	"math/big"
 
-	"github.com/lshtar13/BlockHoldem/base58"
+	"github.com/lshtar13/blockchain/base58"
 	"golang.org/x/crypto/ripemd160"
 )
 

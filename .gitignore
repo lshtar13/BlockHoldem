@@ -25,7 +25,7 @@ go.work.sum
 .env
 
 # executable
-BlockHoldem
+blockchain
 
 # Database file
 *.db
@@ -34,4 +34,4 @@ BlockHoldem
 *.dat
 
 # Executable
-BlockHoldem
+blockchain
