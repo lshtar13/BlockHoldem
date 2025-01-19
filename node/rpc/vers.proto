@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+option go_package = "./rpc";
+
+package rpc;
+
+service versSrv { rpc ReqVers(versReq) returns (versRet); }
+
+message versReq {
+  int64 Version = 1;
+  int64 BestHeight = 2;
+}
+
+message versRet {
+  int64 Version = 1;
+  int64 BestHeight = 2;
+}

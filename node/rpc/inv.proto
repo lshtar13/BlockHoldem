@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option go_package = "./rpc";
+
+package rpc;
+
+service InvSrv { rpc ReqInv(InvReq) returns (InvRet); }
+
+message InvReq {}
+
+message InvRet { repeated Inv invs = 1; }
+
+message Inv {
+  string type = 1;
+  bytes hash = 2;
+}
