@@ -1,0 +1,32 @@
+syntax = "proto3";
+
+option go_package = "./global";
+
+package global;
+
+import "common.proto";
+
+service TxSrv {
+  rpc ReqTx(TxReq) returns (stream Tx);
+  rpc SendTx(Tx) returns (Ack);
+}
+
+message TxReq { repeated bytes hash = 1; }
+
+message Tx {
+  bytes Id = 1;
+  repeated TxIn Vin = 2;
+  repeated TxOut Vout = 3;
+}
+
+message TxIn {
+  bytes Txid = 1;
+  int64 Vout = 2;
+  bytes Sig = 3;
+  bytes PubKey = 4;
+}
+
+message TxOut {
+  int64 Value = 1;
+  bytes PubKeyHash = 2;
+}

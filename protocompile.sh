@@ -1,1 +1,2 @@
-protoc --proto_path=./node/rpc --go_out=./node/rpc --go_opt=paths=source_relative  --go-grpc_out=./node/rpc --go-grpc_opt=paths=source_relative node/rpc/*.proto 
+protoc --proto_path=./node/global --go_out=./node/global --go_opt=paths=source_relative\
+  --go-grpc_out=./node/global --go-grpc_opt=paths=source_relative node/global/*.proto 

@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+option go_package = "./global";
+
+package global;
+
+import "tx.proto";
+import "common.proto";
+
+service BlkSrv {
+  rpc ReqBlk(BlkReq) returns (stream Blk);
+  rpc SendBlk(Blk) returns (Ack);
+}
+
+message BlkReq { repeated bytes hash = 1; }
+
+message Blk {
+  int64 timestamp = 1;
+  repeated Tx txs = 2;
+  bytes PrevBlkHash = 3;
+  bytes Hash = 4;
+  int64 Nonce = 5;
+  int64 Height = 6;
+}

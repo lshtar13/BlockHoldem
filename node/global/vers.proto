@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option go_package = "./global";
+
+package global;
+
+service versSrv { rpc ReqVers(VersReq) returns (VersRet); }
+
+message VersReq {
+  string addr = 1;
+  int64 Version = 2;
+  int64 BestHeight = 3;
+}
+
+message VersRet {
+  int64 Version = 1;
+  int64 BestHeight = 2;
+}

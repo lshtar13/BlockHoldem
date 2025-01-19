@@ -124,6 +124,8 @@ func (bc *Blockchain) FindUTXO() map[string]TXOutputs {
 }
 
 func (bc *Blockchain) AddBlock(b *Block) error {
+
+	// todo: validation
 	err := bc.DB.Update(func(btx *bolt.Tx) error {
 		bucket := btx.Bucket([]byte(blocksBucket))
 		blockInDB := bucket.Get(b.Hash)
