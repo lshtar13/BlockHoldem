@@ -9,13 +9,17 @@ import (
 
 type VersSrv struct {
 	UnimplementedVersSrvServer
-	BC *chain.Blockchain
+	bc *chain.Blockchain
+}
+
+func NewVersSrv(bc *chain.Blockchain) *VersSrv {
+	return &VersSrv{bc: bc}
 }
 
 func (srv *VersSrv) ReqVers(_ context.Context, req *VersReq) (*VersRet, error) {
-	bestHeight := int64(srv.BC.GetBestHeight())
+	bestHeight := int64(srv.bc.GetBestHeight())
 	if req.BestHeight > bestHeight {
-		// send reqInv ...
+		// todo :send reqInv ...
 	}
 
 	return &VersRet{Version: 1, BestHeight: bestHeight}, nil

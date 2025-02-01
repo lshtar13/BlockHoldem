@@ -9,12 +9,16 @@ import (
 
 type InvSrv struct {
 	UnimplementedInvSrvServer
-	BC *chain.Blockchain
+	bc *chain.Blockchain
+}
+
+func NewInvSrv(bc *chain.Blockchain) *InvSrv {
+	return &InvSrv{bc: bc}
 }
 
 func (srv *InvSrv) ReqInv(_ context.Context, _ *InvReq) (*InvRet, error) {
 	invRet := []*Inv{}
-	blocks := srv.BC.GetBlockHashes()
+	blocks := srv.bc.GetBlockHashes()
 	for _, hash := range blocks {
 		invRet = append(invRet, &Inv{Type: InvType_BlkInv, Hash: hash})
 	}

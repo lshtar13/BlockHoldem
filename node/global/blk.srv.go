@@ -42,12 +42,16 @@ func toBlock(b *Blk) *chain.Block {
 
 type BlkSrv struct {
 	UnimplementedBlkSrvServer
-	BC *chain.Blockchain
+	bc *chain.Blockchain
+}
+
+func NewBlkSrv(bc *chain.Blockchain) *BlkSrv {
+	return &BlkSrv{bc: bc}
 }
 
 func (srv *BlkSrv) ReqBlk(req *BlkReq, stream BlkSrv_ReqBlkServer) error {
 	for _, hash := range req.Hash {
-		blk, err := srv.BC.GetBlock(hash)
+		blk, err := srv.bc.GetBlock(hash)
 		if err != nil {
 			continue
 		}
@@ -61,7 +65,7 @@ func (srv *BlkSrv) ReqBlk(req *BlkReq, stream BlkSrv_ReqBlkServer) error {
 
 func (srv *BlkSrv) SendBlk(_ context.Context, blk *Blk) (*Ack, error) {
 	block := toBlock(blk)
-	err := srv.BC.AddBlock(block)
+	err := srv.bc.AddBlock(block)
 	if err != nil {
 		return nil, err
 	}

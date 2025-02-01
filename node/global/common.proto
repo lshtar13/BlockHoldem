@@ -5,3 +5,5 @@ option go_package = "./global";
 package global;
 
 message Ack {}
+
+message Empty {}

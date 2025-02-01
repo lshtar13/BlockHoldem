@@ -76,14 +76,46 @@ func toTransaction(tx *Tx) *chain.Transaction {
 	}
 }
 
+type MemPool map[string]*chain.Transaction
+
+func (m MemPool) Add(tx *chain.Transaction) (result int) {
+	key := string(tx.ID[:])
+	if m[key] != nil {
+		result = 1
+	} else {
+		result = 0
+	}
+	m[key] = tx
+
+	return
+}
+
+func (m MemPool) Remove(id []byte) {
+	delete(m, string(id[:]))
+}
+
+func (m MemPool) IsExist(id []byte) bool {
+	_, isExist := m[string(id[:])]
+	return isExist
+}
+
+func (m MemPool) Attain(id []byte) *chain.Transaction {
+	return m[string(id[:])]
+}
+
 type TxSrv struct {
 	UnimplementedTxSrvServer
-	BC *chain.Blockchain
+	bc   *chain.Blockchain
+	pool MemPool
+}
+
+func NewTxSrv(bc *chain.Blockchain) *TxSrv {
+	return &TxSrv{bc: bc, pool: make(MemPool)}
 }
 
 func (srv *TxSrv) ReqTx(req *TxReq, stream TxSrv_ReqTxServer) error {
 	for _, hash := range req.Hash {
-		tx, err := srv.BC.FindTransaction(hash)
+		tx, err := srv.bc.FindTransaction(hash)
 		if err != nil {
 			continue
 		}
@@ -116,6 +148,14 @@ func ReqTx(cc *grpc.ClientConn, ctx context.Context, hashes [][]byte) ([]*chain.
 	}
 
 	return results, nil
+}
+
+func (srv *TxSrv) SendTx(_ context.Context, tx *Tx) (*Ack, error) {
+	transaction := toTransaction(tx)
+	srv.pool.Add(transaction)
+
+	// delete miner.go and invoke minning process herererererer
+	return &Ack{}, nil
 }
 
 func SendTx(cc *grpc.ClientConn, ctx context.Context, transaction *chain.Transaction) error {

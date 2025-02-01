@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "./global";
+
+package global;
+
+service LedgerSrv { rpc ReqNodes(NodeReq) returns (NodeRet); }
+
+enum NodeType {
+  Central = 0;
+  Miner = 1;
+}
+
+message NodeReq {
+  NodeType Type = 1;
+  map<string, bool> nodes = 2;
+}
+
+message NodeRet { repeated string nodes = 1; }
