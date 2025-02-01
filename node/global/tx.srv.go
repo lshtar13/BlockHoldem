@@ -5,76 +5,9 @@ import (
 	"io"
 
 	"github.com/lshtar13/blockchain/chain"
+	"github.com/lshtar13/blockchain/node/protos"
 	"google.golang.org/grpc"
 )
-
-func newTxInput(in *chain.TXInput) *TxIn {
-	return &TxIn{
-		Txid:   in.Txid,
-		Vout:   int64(in.Vout),
-		Sig:    in.Signature,
-		PubKey: in.Pubkey,
-	}
-}
-
-func toTxInput(in *TxIn) chain.TXInput {
-	return chain.TXInput{
-		Txid:      in.GetTxid(),
-		Vout:      int(in.GetVout()),
-		Signature: in.GetSig(),
-		Pubkey:    in.GetPubKey(),
-	}
-}
-
-func newTxOutput(out *chain.TXOutput) *TxOut {
-	return &TxOut{
-		Value:      int64(out.Value),
-		PubKeyHash: out.PubKeyHash,
-	}
-}
-
-func toTxOutput(out *TxOut) chain.TXOutput {
-	return chain.TXOutput{
-		Value:      int(out.GetValue()),
-		PubKeyHash: out.GetPubKeyHash(),
-	}
-}
-
-func newTx(tx *chain.Transaction) *Tx {
-	vin, vout := []*TxIn{}, []*TxOut{}
-
-	for _, in := range tx.Vin {
-		vin = append(vin, newTxInput(&in))
-	}
-
-	for _, out := range tx.Vout {
-		vout = append(vout, newTxOutput(&out))
-	}
-
-	return &Tx{
-		Id:   tx.ID,
-		Vin:  vin,
-		Vout: vout,
-	}
-}
-
-func toTransaction(tx *Tx) *chain.Transaction {
-	vin, vout := []chain.TXInput{}, []chain.TXOutput{}
-
-	for _, in := range tx.Vin {
-		vin = append(vin, toTxInput(in))
-	}
-
-	for _, out := range tx.Vout {
-		vout = append(vout, toTxOutput(out))
-	}
-
-	return &chain.Transaction{
-		ID:   tx.GetId(),
-		Vin:  vin,
-		Vout: vout,
-	}
-}
 
 type MemPool map[string]*chain.Transaction
 
@@ -120,7 +53,7 @@ func (srv *TxSrv) ReqTx(req *TxReq, stream TxSrv_ReqTxServer) error {
 			continue
 		}
 
-		if err := stream.Send(newTx(&tx)); err != nil {
+		if err := stream.Send(protos.NewTx(&tx)); err != nil {
 			return err
 		}
 	}
@@ -144,23 +77,23 @@ func ReqTx(cc *grpc.ClientConn, ctx context.Context, hashes [][]byte) ([]*chain.
 			return nil, err
 		}
 
-		results = append(results, toTransaction(tx))
+		results = append(results, protos.ToTransaction(tx))
 	}
 
 	return results, nil
 }
 
-func (srv *TxSrv) SendTx(_ context.Context, tx *Tx) (*Ack, error) {
-	transaction := toTransaction(tx)
+func (srv *TxSrv) SendTx(_ context.Context, tx *protos.Tx) (*protos.Ack, error) {
+	transaction := protos.ToTransaction(tx)
 	srv.pool.Add(transaction)
 
 	// delete miner.go and invoke minning process herererererer
-	return &Ack{}, nil
+	return &protos.Ack{}, nil
 }
 
 func SendTx(cc *grpc.ClientConn, ctx context.Context, transaction *chain.Transaction) error {
 	client := NewTxSrvClient(cc)
-	_, err := client.SendTx(ctx, newTx(transaction))
+	_, err := client.SendTx(ctx, protos.NewTx(transaction))
 
 	return err
 }

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"log"
 
-	"github.com/lshtar13/blockchain/network"
 	"github.com/lshtar13/blockchain/wallet"
 )
 

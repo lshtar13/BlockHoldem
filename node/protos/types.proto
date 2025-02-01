@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+option go_package = "github.com/lshtar13/blockchain/node/protos";
+
+package protos;
+
+message Ack {}
+
+message Empty {}
+
+message Blk {
+  int64 timestamp = 1;
+  repeated Tx txs = 2;
+  bytes PrevBlkHash = 3;
+  bytes Hash = 4;
+  int64 Nonce = 5;
+  int64 Height = 6;
+}
+
+message Tx {
+  bytes Id = 1;
+  repeated TxIn Vin = 2;
+  repeated TxOut Vout = 3;
+}
+
+message TxIn {
+  bytes Txid = 1;
+  int64 Vout = 2;
+  bytes Sig = 3;
+  bytes PubKey = 4;
+}
+
+message TxOut {
+  int64 Value = 1;
+  bytes PubKeyHash = 2;
+}

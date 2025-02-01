@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.12.4
-// source: ledger.proto
+// source: global/ledger.proto
 
 package global
 
@@ -117,5 +117,5 @@ var LedgerSrv_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "ledger.proto",
+	Metadata: "global/ledger.proto",
 }

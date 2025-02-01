@@ -2,11 +2,12 @@
 // versions:
 // 	protoc-gen-go v1.36.2
 // 	protoc        v3.12.4
-// source: tx.proto
+// source: global/tx.proto
 
 package global
 
 import (
+	protos "github.com/lshtar13/blockchain/node/protos"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -29,7 +30,7 @@ type TxReq struct {
 
 func (x *TxReq) Reset() {
 	*x = TxReq{}
-	mi := &file_tx_proto_msgTypes[0]
+	mi := &file_global_tx_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -41,7 +42,7 @@ func (x *TxReq) String() string {
 func (*TxReq) ProtoMessage() {}
 
 func (x *TxReq) ProtoReflect() protoreflect.Message {
-	mi := &file_tx_proto_msgTypes[0]
+	mi := &file_global_tx_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -54,7 +55,7 @@ func (x *TxReq) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TxReq.ProtoReflect.Descriptor instead.
 func (*TxReq) Descriptor() ([]byte, []int) {
-	return file_tx_proto_rawDescGZIP(), []int{0}
+	return file_global_tx_proto_rawDescGZIP(), []int{0}
 }
 
 func (x *TxReq) GetHash() [][]byte {
@@ -64,273 +65,76 @@ func (x *TxReq) GetHash() [][]byte {
 	return nil
 }
 
-type Tx struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            []byte                 `protobuf:"bytes,1,opt,name=Id,proto3" json:"Id,omitempty"`
-	Vin           []*TxIn                `protobuf:"bytes,2,rep,name=Vin,proto3" json:"Vin,omitempty"`
-	Vout          []*TxOut               `protobuf:"bytes,3,rep,name=Vout,proto3" json:"Vout,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
+var File_global_tx_proto protoreflect.FileDescriptor
 
-func (x *Tx) Reset() {
-	*x = Tx{}
-	mi := &file_tx_proto_msgTypes[1]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *Tx) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*Tx) ProtoMessage() {}
-
-func (x *Tx) ProtoReflect() protoreflect.Message {
-	mi := &file_tx_proto_msgTypes[1]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use Tx.ProtoReflect.Descriptor instead.
-func (*Tx) Descriptor() ([]byte, []int) {
-	return file_tx_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *Tx) GetId() []byte {
-	if x != nil {
-		return x.Id
-	}
-	return nil
-}
-
-func (x *Tx) GetVin() []*TxIn {
-	if x != nil {
-		return x.Vin
-	}
-	return nil
-}
-
-func (x *Tx) GetVout() []*TxOut {
-	if x != nil {
-		return x.Vout
-	}
-	return nil
-}
-
-type TxIn struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Txid          []byte                 `protobuf:"bytes,1,opt,name=Txid,proto3" json:"Txid,omitempty"`
-	Vout          int64                  `protobuf:"varint,2,opt,name=Vout,proto3" json:"Vout,omitempty"`
-	Sig           []byte                 `protobuf:"bytes,3,opt,name=Sig,proto3" json:"Sig,omitempty"`
-	PubKey        []byte                 `protobuf:"bytes,4,opt,name=PubKey,proto3" json:"PubKey,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TxIn) Reset() {
-	*x = TxIn{}
-	mi := &file_tx_proto_msgTypes[2]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TxIn) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TxIn) ProtoMessage() {}
-
-func (x *TxIn) ProtoReflect() protoreflect.Message {
-	mi := &file_tx_proto_msgTypes[2]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TxIn.ProtoReflect.Descriptor instead.
-func (*TxIn) Descriptor() ([]byte, []int) {
-	return file_tx_proto_rawDescGZIP(), []int{2}
-}
-
-func (x *TxIn) GetTxid() []byte {
-	if x != nil {
-		return x.Txid
-	}
-	return nil
-}
-
-func (x *TxIn) GetVout() int64 {
-	if x != nil {
-		return x.Vout
-	}
-	return 0
-}
-
-func (x *TxIn) GetSig() []byte {
-	if x != nil {
-		return x.Sig
-	}
-	return nil
-}
-
-func (x *TxIn) GetPubKey() []byte {
-	if x != nil {
-		return x.PubKey
-	}
-	return nil
-}
-
-type TxOut struct {
-	state         protoimpl.MessageState `protogen:"open.v1"`
-	Value         int64                  `protobuf:"varint,1,opt,name=Value,proto3" json:"Value,omitempty"`
-	PubKeyHash    []byte                 `protobuf:"bytes,2,opt,name=PubKeyHash,proto3" json:"PubKeyHash,omitempty"`
-	unknownFields protoimpl.UnknownFields
-	sizeCache     protoimpl.SizeCache
-}
-
-func (x *TxOut) Reset() {
-	*x = TxOut{}
-	mi := &file_tx_proto_msgTypes[3]
-	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-	ms.StoreMessageInfo(mi)
-}
-
-func (x *TxOut) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*TxOut) ProtoMessage() {}
-
-func (x *TxOut) ProtoReflect() protoreflect.Message {
-	mi := &file_tx_proto_msgTypes[3]
-	if x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use TxOut.ProtoReflect.Descriptor instead.
-func (*TxOut) Descriptor() ([]byte, []int) {
-	return file_tx_proto_rawDescGZIP(), []int{3}
-}
-
-func (x *TxOut) GetValue() int64 {
-	if x != nil {
-		return x.Value
-	}
-	return 0
-}
-
-func (x *TxOut) GetPubKeyHash() []byte {
-	if x != nil {
-		return x.PubKeyHash
-	}
-	return nil
-}
-
-var File_tx_proto protoreflect.FileDescriptor
-
-var file_tx_proto_rawDesc = []byte{
-	0x0a, 0x08, 0x74, 0x78, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x12, 0x06, 0x67, 0x6c, 0x6f, 0x62,
-	0x61, 0x6c, 0x1a, 0x0c, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x22, 0x1b, 0x0a, 0x05, 0x54, 0x78, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x68, 0x61, 0x73,
-	0x68, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0c, 0x52, 0x04, 0x68, 0x61, 0x73, 0x68, 0x22, 0x57, 0x0a,
-	0x02, 0x54, 0x78, 0x12, 0x0e, 0x0a, 0x02, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52,
-	0x02, 0x49, 0x64, 0x12, 0x1e, 0x0a, 0x03, 0x56, 0x69, 0x6e, 0x18, 0x02, 0x20, 0x03, 0x28, 0x0b,
-	0x32, 0x0c, 0x2e, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x2e, 0x54, 0x78, 0x49, 0x6e, 0x52, 0x03,
-	0x56, 0x69, 0x6e, 0x12, 0x21, 0x0a, 0x04, 0x56, 0x6f, 0x75, 0x74, 0x18, 0x03, 0x20, 0x03, 0x28,
-	0x0b, 0x32, 0x0d, 0x2e, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x2e, 0x54, 0x78, 0x4f, 0x75, 0x74,
-	0x52, 0x04, 0x56, 0x6f, 0x75, 0x74, 0x22, 0x58, 0x0a, 0x04, 0x54, 0x78, 0x49, 0x6e, 0x12, 0x12,
-	0x0a, 0x04, 0x54, 0x78, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x04, 0x54, 0x78,
-	0x69, 0x64, 0x12, 0x12, 0x0a, 0x04, 0x56, 0x6f, 0x75, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x03,
-	0x52, 0x04, 0x56, 0x6f, 0x75, 0x74, 0x12, 0x10, 0x0a, 0x03, 0x53, 0x69, 0x67, 0x18, 0x03, 0x20,
-	0x01, 0x28, 0x0c, 0x52, 0x03, 0x53, 0x69, 0x67, 0x12, 0x16, 0x0a, 0x06, 0x50, 0x75, 0x62, 0x4b,
-	0x65, 0x79, 0x18, 0x04, 0x20, 0x01, 0x28, 0x0c, 0x52, 0x06, 0x50, 0x75, 0x62, 0x4b, 0x65, 0x79,
-	0x22, 0x3d, 0x0a, 0x05, 0x54, 0x78, 0x4f, 0x75, 0x74, 0x12, 0x14, 0x0a, 0x05, 0x56, 0x61, 0x6c,
-	0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x05, 0x56, 0x61, 0x6c, 0x75, 0x65, 0x12,
-	0x1e, 0x0a, 0x0a, 0x50, 0x75, 0x62, 0x4b, 0x65, 0x79, 0x48, 0x61, 0x73, 0x68, 0x18, 0x02, 0x20,
-	0x01, 0x28, 0x0c, 0x52, 0x0a, 0x50, 0x75, 0x62, 0x4b, 0x65, 0x79, 0x48, 0x61, 0x73, 0x68, 0x32,
-	0x50, 0x0a, 0x05, 0x54, 0x78, 0x53, 0x72, 0x76, 0x12, 0x24, 0x0a, 0x05, 0x52, 0x65, 0x71, 0x54,
-	0x78, 0x12, 0x0d, 0x2e, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x2e, 0x54, 0x78, 0x52, 0x65, 0x71,
-	0x1a, 0x0a, 0x2e, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x2e, 0x54, 0x78, 0x30, 0x01, 0x12, 0x21,
-	0x0a, 0x06, 0x53, 0x65, 0x6e, 0x64, 0x54, 0x78, 0x12, 0x0a, 0x2e, 0x67, 0x6c, 0x6f, 0x62, 0x61,
-	0x6c, 0x2e, 0x54, 0x78, 0x1a, 0x0b, 0x2e, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x2e, 0x41, 0x63,
-	0x6b, 0x42, 0x0a, 0x5a, 0x08, 0x2e, 0x2f, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+var file_global_tx_proto_rawDesc = []byte{
+	0x0a, 0x0f, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x2f, 0x74, 0x78, 0x2e, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x12, 0x06, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x1a, 0x12, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x73, 0x2f, 0x74, 0x79, 0x70, 0x65, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x1b, 0x0a,
+	0x05, 0x54, 0x78, 0x52, 0x65, 0x71, 0x12, 0x12, 0x0a, 0x04, 0x68, 0x61, 0x73, 0x68, 0x18, 0x01,
+	0x20, 0x03, 0x28, 0x0c, 0x52, 0x04, 0x68, 0x61, 0x73, 0x68, 0x32, 0x50, 0x0a, 0x05, 0x54, 0x78,
+	0x53, 0x72, 0x76, 0x12, 0x24, 0x0a, 0x05, 0x52, 0x65, 0x71, 0x54, 0x78, 0x12, 0x0d, 0x2e, 0x67,
+	0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x2e, 0x54, 0x78, 0x52, 0x65, 0x71, 0x1a, 0x0a, 0x2e, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x73, 0x2e, 0x54, 0x78, 0x30, 0x01, 0x12, 0x21, 0x0a, 0x06, 0x53, 0x65, 0x6e,
+	0x64, 0x54, 0x78, 0x12, 0x0a, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73, 0x2e, 0x54, 0x78, 0x1a,
+	0x0b, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x73, 0x2e, 0x41, 0x63, 0x6b, 0x42, 0x2c, 0x5a, 0x2a,
+	0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x6c, 0x73, 0x68, 0x74, 0x61,
+	0x72, 0x31, 0x33, 0x2f, 0x62, 0x6c, 0x6f, 0x63, 0x6b, 0x63, 0x68, 0x61, 0x69, 0x6e, 0x2f, 0x6e,
+	0x6f, 0x64, 0x65, 0x2f, 0x67, 0x6c, 0x6f, 0x62, 0x61, 0x6c, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
-	file_tx_proto_rawDescOnce sync.Once
-	file_tx_proto_rawDescData = file_tx_proto_rawDesc
+	file_global_tx_proto_rawDescOnce sync.Once
+	file_global_tx_proto_rawDescData = file_global_tx_proto_rawDesc
 )
 
-func file_tx_proto_rawDescGZIP() []byte {
-	file_tx_proto_rawDescOnce.Do(func() {
-		file_tx_proto_rawDescData = protoimpl.X.CompressGZIP(file_tx_proto_rawDescData)
+func file_global_tx_proto_rawDescGZIP() []byte {
+	file_global_tx_proto_rawDescOnce.Do(func() {
+		file_global_tx_proto_rawDescData = protoimpl.X.CompressGZIP(file_global_tx_proto_rawDescData)
 	})
-	return file_tx_proto_rawDescData
+	return file_global_tx_proto_rawDescData
 }
 
-var file_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
-var file_tx_proto_goTypes = []any{
-	(*TxReq)(nil), // 0: global.TxReq
-	(*Tx)(nil),    // 1: global.Tx
-	(*TxIn)(nil),  // 2: global.TxIn
-	(*TxOut)(nil), // 3: global.TxOut
-	(*Ack)(nil),   // 4: global.Ack
+var file_global_tx_proto_msgTypes = make([]protoimpl.MessageInfo, 1)
+var file_global_tx_proto_goTypes = []any{
+	(*TxReq)(nil),      // 0: global.TxReq
+	(*protos.Tx)(nil),  // 1: protos.Tx
+	(*protos.Ack)(nil), // 2: protos.Ack
 }
-var file_tx_proto_depIdxs = []int32{
-	2, // 0: global.Tx.Vin:type_name -> global.TxIn
-	3, // 1: global.Tx.Vout:type_name -> global.TxOut
-	0, // 2: global.TxSrv.ReqTx:input_type -> global.TxReq
-	1, // 3: global.TxSrv.SendTx:input_type -> global.Tx
-	1, // 4: global.TxSrv.ReqTx:output_type -> global.Tx
-	4, // 5: global.TxSrv.SendTx:output_type -> global.Ack
-	4, // [4:6] is the sub-list for method output_type
-	2, // [2:4] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+var file_global_tx_proto_depIdxs = []int32{
+	0, // 0: global.TxSrv.ReqTx:input_type -> global.TxReq
+	1, // 1: global.TxSrv.SendTx:input_type -> protos.Tx
+	1, // 2: global.TxSrv.ReqTx:output_type -> protos.Tx
+	2, // 3: global.TxSrv.SendTx:output_type -> protos.Ack
+	2, // [2:4] is the sub-list for method output_type
+	0, // [0:2] is the sub-list for method input_type
+	0, // [0:0] is the sub-list for extension type_name
+	0, // [0:0] is the sub-list for extension extendee
+	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_tx_proto_init() }
-func file_tx_proto_init() {
-	if File_tx_proto != nil {
+func init() { file_global_tx_proto_init() }
+func file_global_tx_proto_init() {
+	if File_global_tx_proto != nil {
 		return
 	}
-	file_common_proto_init()
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: file_tx_proto_rawDesc,
+			RawDescriptor: file_global_tx_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   4,
+			NumMessages:   1,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
-		GoTypes:           file_tx_proto_goTypes,
-		DependencyIndexes: file_tx_proto_depIdxs,
-		MessageInfos:      file_tx_proto_msgTypes,
+		GoTypes:           file_global_tx_proto_goTypes,
+		DependencyIndexes: file_global_tx_proto_depIdxs,
+		MessageInfos:      file_global_tx_proto_msgTypes,
 	}.Build()
-	File_tx_proto = out.File
-	file_tx_proto_rawDesc = nil
-	file_tx_proto_goTypes = nil
-	file_tx_proto_depIdxs = nil
+	File_global_tx_proto = out.File
+	file_global_tx_proto_rawDesc = nil
+	file_global_tx_proto_goTypes = nil
+	file_global_tx_proto_depIdxs = nil
 }

@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.12.4
-// source: inv.proto
+// source: global/inv.proto
 
 package global
 
@@ -117,5 +117,5 @@ var InvSrv_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "inv.proto",
+	Metadata: "global/inv.proto",
 }

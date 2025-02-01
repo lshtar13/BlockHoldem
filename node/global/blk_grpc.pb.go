@@ -2,12 +2,13 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.12.4
-// source: blk.proto
+// source: global/blk.proto
 
 package global
 
 import (
 	context "context"
+	protos "github.com/lshtar13/blockchain/node/protos"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -27,8 +28,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BlkSrvClient interface {
-	ReqBlk(ctx context.Context, in *BlkReq, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Blk], error)
-	SendBlk(ctx context.Context, in *Blk, opts ...grpc.CallOption) (*Ack, error)
+	ReqBlk(ctx context.Context, in *BlkReq, opts ...grpc.CallOption) (grpc.ServerStreamingClient[protos.Blk], error)
+	SendBlk(ctx context.Context, in *protos.Blk, opts ...grpc.CallOption) (*protos.Ack, error)
 }
 
 type blkSrvClient struct {
@@ -39,13 +40,13 @@ func NewBlkSrvClient(cc grpc.ClientConnInterface) BlkSrvClient {
 	return &blkSrvClient{cc}
 }
 
-func (c *blkSrvClient) ReqBlk(ctx context.Context, in *BlkReq, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Blk], error) {
+func (c *blkSrvClient) ReqBlk(ctx context.Context, in *BlkReq, opts ...grpc.CallOption) (grpc.ServerStreamingClient[protos.Blk], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &BlkSrv_ServiceDesc.Streams[0], BlkSrv_ReqBlk_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[BlkReq, Blk]{ClientStream: stream}
+	x := &grpc.GenericClientStream[BlkReq, protos.Blk]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -56,11 +57,11 @@ func (c *blkSrvClient) ReqBlk(ctx context.Context, in *BlkReq, opts ...grpc.Call
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type BlkSrv_ReqBlkClient = grpc.ServerStreamingClient[Blk]
+type BlkSrv_ReqBlkClient = grpc.ServerStreamingClient[protos.Blk]
 
-func (c *blkSrvClient) SendBlk(ctx context.Context, in *Blk, opts ...grpc.CallOption) (*Ack, error) {
+func (c *blkSrvClient) SendBlk(ctx context.Context, in *protos.Blk, opts ...grpc.CallOption) (*protos.Ack, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Ack)
+	out := new(protos.Ack)
 	err := c.cc.Invoke(ctx, BlkSrv_SendBlk_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -72,8 +73,8 @@ func (c *blkSrvClient) SendBlk(ctx context.Context, in *Blk, opts ...grpc.CallOp
 // All implementations must embed UnimplementedBlkSrvServer
 // for forward compatibility.
 type BlkSrvServer interface {
-	ReqBlk(*BlkReq, grpc.ServerStreamingServer[Blk]) error
-	SendBlk(context.Context, *Blk) (*Ack, error)
+	ReqBlk(*BlkReq, grpc.ServerStreamingServer[protos.Blk]) error
+	SendBlk(context.Context, *protos.Blk) (*protos.Ack, error)
 	mustEmbedUnimplementedBlkSrvServer()
 }
 
@@ -84,10 +85,10 @@ type BlkSrvServer interface {
 // pointer dereference when methods are called.
 type UnimplementedBlkSrvServer struct{}
 
-func (UnimplementedBlkSrvServer) ReqBlk(*BlkReq, grpc.ServerStreamingServer[Blk]) error {
+func (UnimplementedBlkSrvServer) ReqBlk(*BlkReq, grpc.ServerStreamingServer[protos.Blk]) error {
 	return status.Errorf(codes.Unimplemented, "method ReqBlk not implemented")
 }
-func (UnimplementedBlkSrvServer) SendBlk(context.Context, *Blk) (*Ack, error) {
+func (UnimplementedBlkSrvServer) SendBlk(context.Context, *protos.Blk) (*protos.Ack, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendBlk not implemented")
 }
 func (UnimplementedBlkSrvServer) mustEmbedUnimplementedBlkSrvServer() {}
@@ -116,14 +117,14 @@ func _BlkSrv_ReqBlk_Handler(srv interface{}, stream grpc.ServerStream) error {
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(BlkSrvServer).ReqBlk(m, &grpc.GenericServerStream[BlkReq, Blk]{ServerStream: stream})
+	return srv.(BlkSrvServer).ReqBlk(m, &grpc.GenericServerStream[BlkReq, protos.Blk]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type BlkSrv_ReqBlkServer = grpc.ServerStreamingServer[Blk]
+type BlkSrv_ReqBlkServer = grpc.ServerStreamingServer[protos.Blk]
 
 func _BlkSrv_SendBlk_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Blk)
+	in := new(protos.Blk)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -135,7 +136,7 @@ func _BlkSrv_SendBlk_Handler(srv interface{}, ctx context.Context, dec func(inte
 		FullMethod: BlkSrv_SendBlk_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(BlkSrvServer).SendBlk(ctx, req.(*Blk))
+		return srv.(BlkSrvServer).SendBlk(ctx, req.(*protos.Blk))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -159,5 +160,5 @@ var BlkSrv_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "blk.proto",
+	Metadata: "global/blk.proto",
 }

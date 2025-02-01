@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+option go_package = "github.com/lshtar13/blockchain/node/local";
+
+package local;
+
+service UtxoSrv { rpc ReqBalance(BalanceReq) returns (Balance); }
+
+message BalanceReq { string addr = 1; }
+
+message Balance { int64 balance = 1; }

@@ -5,40 +5,9 @@ import (
 	"io"
 
 	"github.com/lshtar13/blockchain/chain"
+	"github.com/lshtar13/blockchain/node/protos"
 	"google.golang.org/grpc"
 )
-
-func newBlk(b *chain.Block) *Blk {
-	txs := []*Tx{}
-	for _, tx := range b.Transactions {
-		txs = append(txs, newTx(tx))
-	}
-
-	return &Blk{
-		Timestamp:   b.Timestamp,
-		Txs:         txs,
-		PrevBlkHash: b.PrevBlockHash,
-		Hash:        b.Hash,
-		Nonce:       int64(b.Nonce),
-		Height:      int64(b.Height),
-	}
-}
-
-func toBlock(b *Blk) *chain.Block {
-	txs := []*chain.Transaction{}
-	for _, tx := range b.Txs {
-		txs = append(txs, toTransaction(tx))
-	}
-
-	return &chain.Block{
-		Timestamp:     b.GetTimestamp(),
-		Transactions:  txs,
-		PrevBlockHash: b.GetPrevBlkHash(),
-		Hash:          b.GetHash(),
-		Nonce:         int(b.GetNonce()),
-		Height:        int(b.GetHeight()),
-	}
-}
 
 type BlkSrv struct {
 	UnimplementedBlkSrvServer
@@ -55,7 +24,7 @@ func (srv *BlkSrv) ReqBlk(req *BlkReq, stream BlkSrv_ReqBlkServer) error {
 		if err != nil {
 			continue
 		}
-		if err := stream.Send(newBlk(blk)); err != nil {
+		if err := stream.Send(protos.NewBlk(blk)); err != nil {
 			return err
 		}
 	}
@@ -63,14 +32,14 @@ func (srv *BlkSrv) ReqBlk(req *BlkReq, stream BlkSrv_ReqBlkServer) error {
 	return nil
 }
 
-func (srv *BlkSrv) SendBlk(_ context.Context, blk *Blk) (*Ack, error) {
-	block := toBlock(blk)
+func (srv *BlkSrv) SendBlk(_ context.Context, blk *protos.Blk) (*protos.Ack, error) {
+	block := protos.ToBlock(blk)
 	err := srv.bc.AddBlock(block)
 	if err != nil {
 		return nil, err
 	}
 
-	return &Ack{}, nil
+	return &protos.Ack{}, nil
 }
 
 func ReqBlk(cc *grpc.ClientConn, ctx context.Context, hashes [][]byte) ([]*chain.Block, error) {
@@ -89,7 +58,7 @@ func ReqBlk(cc *grpc.ClientConn, ctx context.Context, hashes [][]byte) ([]*chain
 			return nil, err
 		}
 
-		results = append(results, toBlock(blk))
+		results = append(results, protos.ToBlock(blk))
 	}
 
 	return results, nil
@@ -97,7 +66,7 @@ func ReqBlk(cc *grpc.ClientConn, ctx context.Context, hashes [][]byte) ([]*chain
 
 func SendBlk(cc *grpc.ClientConn, ctx context.Context, block *chain.Block) error {
 	client := NewBlkSrvClient(cc)
-	_, err := client.SendBlk(ctx, newBlk(block))
+	_, err := client.SendBlk(ctx, protos.NewBlk(block))
 
 	return err
 }

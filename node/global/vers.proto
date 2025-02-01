@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-option go_package = "./global";
+option go_package = "github.com/lshtar13/blockchain/node/global";
 
 package global;
 

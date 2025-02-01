@@ -2,12 +2,13 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.12.4
-// source: tx.proto
+// source: global/tx.proto
 
 package global
 
 import (
 	context "context"
+	protos "github.com/lshtar13/blockchain/node/protos"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -27,8 +28,8 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type TxSrvClient interface {
-	ReqTx(ctx context.Context, in *TxReq, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Tx], error)
-	SendTx(ctx context.Context, in *Tx, opts ...grpc.CallOption) (*Ack, error)
+	ReqTx(ctx context.Context, in *TxReq, opts ...grpc.CallOption) (grpc.ServerStreamingClient[protos.Tx], error)
+	SendTx(ctx context.Context, in *protos.Tx, opts ...grpc.CallOption) (*protos.Ack, error)
 }
 
 type txSrvClient struct {
@@ -39,13 +40,13 @@ func NewTxSrvClient(cc grpc.ClientConnInterface) TxSrvClient {
 	return &txSrvClient{cc}
 }
 
-func (c *txSrvClient) ReqTx(ctx context.Context, in *TxReq, opts ...grpc.CallOption) (grpc.ServerStreamingClient[Tx], error) {
+func (c *txSrvClient) ReqTx(ctx context.Context, in *TxReq, opts ...grpc.CallOption) (grpc.ServerStreamingClient[protos.Tx], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &TxSrv_ServiceDesc.Streams[0], TxSrv_ReqTx_FullMethodName, cOpts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &grpc.GenericClientStream[TxReq, Tx]{ClientStream: stream}
+	x := &grpc.GenericClientStream[TxReq, protos.Tx]{ClientStream: stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -56,11 +57,11 @@ func (c *txSrvClient) ReqTx(ctx context.Context, in *TxReq, opts ...grpc.CallOpt
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type TxSrv_ReqTxClient = grpc.ServerStreamingClient[Tx]
+type TxSrv_ReqTxClient = grpc.ServerStreamingClient[protos.Tx]
 
-func (c *txSrvClient) SendTx(ctx context.Context, in *Tx, opts ...grpc.CallOption) (*Ack, error) {
+func (c *txSrvClient) SendTx(ctx context.Context, in *protos.Tx, opts ...grpc.CallOption) (*protos.Ack, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
-	out := new(Ack)
+	out := new(protos.Ack)
 	err := c.cc.Invoke(ctx, TxSrv_SendTx_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
@@ -72,8 +73,8 @@ func (c *txSrvClient) SendTx(ctx context.Context, in *Tx, opts ...grpc.CallOptio
 // All implementations must embed UnimplementedTxSrvServer
 // for forward compatibility.
 type TxSrvServer interface {
-	ReqTx(*TxReq, grpc.ServerStreamingServer[Tx]) error
-	SendTx(context.Context, *Tx) (*Ack, error)
+	ReqTx(*TxReq, grpc.ServerStreamingServer[protos.Tx]) error
+	SendTx(context.Context, *protos.Tx) (*protos.Ack, error)
 	mustEmbedUnimplementedTxSrvServer()
 }
 
@@ -84,10 +85,10 @@ type TxSrvServer interface {
 // pointer dereference when methods are called.
 type UnimplementedTxSrvServer struct{}
 
-func (UnimplementedTxSrvServer) ReqTx(*TxReq, grpc.ServerStreamingServer[Tx]) error {
+func (UnimplementedTxSrvServer) ReqTx(*TxReq, grpc.ServerStreamingServer[protos.Tx]) error {
 	return status.Errorf(codes.Unimplemented, "method ReqTx not implemented")
 }
-func (UnimplementedTxSrvServer) SendTx(context.Context, *Tx) (*Ack, error) {
+func (UnimplementedTxSrvServer) SendTx(context.Context, *protos.Tx) (*protos.Ack, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SendTx not implemented")
 }
 func (UnimplementedTxSrvServer) mustEmbedUnimplementedTxSrvServer() {}
@@ -116,14 +117,14 @@ func _TxSrv_ReqTx_Handler(srv interface{}, stream grpc.ServerStream) error {
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(TxSrvServer).ReqTx(m, &grpc.GenericServerStream[TxReq, Tx]{ServerStream: stream})
+	return srv.(TxSrvServer).ReqTx(m, &grpc.GenericServerStream[TxReq, protos.Tx]{ServerStream: stream})
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
-type TxSrv_ReqTxServer = grpc.ServerStreamingServer[Tx]
+type TxSrv_ReqTxServer = grpc.ServerStreamingServer[protos.Tx]
 
 func _TxSrv_SendTx_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Tx)
+	in := new(protos.Tx)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -135,7 +136,7 @@ func _TxSrv_SendTx_Handler(srv interface{}, ctx context.Context, dec func(interf
 		FullMethod: TxSrv_SendTx_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(TxSrvServer).SendTx(ctx, req.(*Tx))
+		return srv.(TxSrvServer).SendTx(ctx, req.(*protos.Tx))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -159,5 +160,5 @@ var TxSrv_ServiceDesc = grpc.ServiceDesc{
 			ServerStreams: true,
 		},
 	},
-	Metadata: "tx.proto",
+	Metadata: "global/tx.proto",
 }
