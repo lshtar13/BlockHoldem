@@ -8,6 +8,7 @@ import (
 	"os"
 	"sync"
 
+	"github.com/lshtar13/blockchain/chain"
 	"github.com/lshtar13/blockchain/utils"
 	"google.golang.org/grpc"
 )
@@ -19,10 +20,12 @@ const (
 )
 
 type Ledger struct {
-	NodeID  string
-	Central utils.Set
-	Miners  utils.Set
+	NodeID  string    `json:"NodeID"`
+	Central utils.Set `json:"Central"`
+	Miners  utils.Set `json:"Miners"`
 }
+
+var genLedger = Ledger{NodeID: "genesis", Central: make(utils.Set), Miners: make(utils.Set)}
 
 func GetName(nodeID string) string {
 	path := os.Getenv(EnvName)
@@ -31,6 +34,72 @@ func GetName(nodeID string) string {
 	}
 
 	return fmt.Sprintf("%s/%s.json", path, nodeID)
+}
+
+// wrapper
+func sendBlock(addr string, block *chain.Block, errCh chan<- error, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	cc, err := grpc.NewClient(addr)
+	if err != nil {
+		errCh <- fmt.Errorf("error while connecting to %s:%v", addr, err)
+		return
+	}
+	defer cc.Close()
+
+	err = SendBlk(cc, context.Background(), block)
+	if err != nil {
+		errCh <- fmt.Errorf("error while sending block to %s:%v", addr, err)
+		return
+	}
+
+	errCh <- nil
+}
+
+func sendTransaction(addr string, transaction *chain.Transaction, errCh chan<- error, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	cc, err := grpc.NewClient(addr)
+	if err != nil {
+		errCh <- fmt.Errorf("error while connecting to %s:%v", addr, err)
+		return
+	}
+	defer cc.Close()
+
+	err = SendTx(cc, context.Background(), transaction)
+	if err != nil {
+		errCh <- fmt.Errorf("error while sending transaction to %s:%v", addr, err)
+		return
+	}
+
+	errCh <- nil
+}
+
+func (l *Ledger) Propagate(data interface{}) error {
+	wg := new(sync.WaitGroup)
+	errCh := make(chan error)
+	defer close(errCh)
+
+	switch d := data.(type) {
+	case *chain.Block:
+		for addr := range l.Central {
+			wg.Add(1)
+			go sendBlock(addr, d, errCh, wg)
+		}
+
+	case *chain.Transaction:
+		for addr := range l.Miners {
+			wg.Add(1)
+			go sendTransaction(addr, d, errCh, wg)
+		}
+
+	default:
+		return fmt.Errorf("%v is neither block nor transaction", d)
+	}
+
+	wg.Wait()
+
+	return nil
 }
 
 func (l *Ledger) ReqNodes(addr string, newCentralCh chan<- []string, newMinerCh chan<- []string, wg *sync.WaitGroup) {
@@ -95,14 +164,12 @@ func (l Ledger) Save2FIle() error {
 
 func NewLedger(nodeID string) (*Ledger, error) {
 	// get data from file
+	log.Printf("get new ledger ...\n")
 	name := GetName(nodeID)
 	data, err := os.ReadFile(name)
-	if err != nil {
-		return nil, fmt.Errorf("error while reading %s: %v", name, err)
-	}
 
 	// if data is empty
-	if len(data) == 0 {
+	if os.IsNotExist(err) && len(data) == 0 {
 		// get data from genesis file
 		genName := GetName("genesis")
 		data, err = os.ReadFile(genName)
@@ -115,11 +182,17 @@ func NewLedger(nodeID string) (*Ledger, error) {
 		if err != nil {
 			return nil, fmt.Errorf("error while writing to %s: %v", name, err)
 		}
+
+		log.Printf("set default file ...\n")
+	} else if err != nil {
+		return nil, fmt.Errorf("error while reading %s: %v", name, err)
 	}
+	log.Printf("read ledger file (%s) ...\n", name)
 
 	result := &Ledger{}
 	err = json.Unmarshal(data, result)
 	if err != nil {
+		log.Println(data)
 		return nil, fmt.Errorf("error while unmarshal %s: %v", name, err)
 	}
 	result.NodeID = nodeID

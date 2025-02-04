@@ -38,12 +38,12 @@ func (m MemPool) Attain(id []byte) *chain.Transaction {
 
 type TxSrv struct {
 	UnimplementedTxSrvServer
-	bc   *chain.Blockchain
-	pool MemPool
+	bc      *chain.Blockchain
+	transit chan<- *chain.Transaction
 }
 
-func NewTxSrv(bc *chain.Blockchain) *TxSrv {
-	return &TxSrv{bc: bc, pool: make(MemPool)}
+func NewTxSrv(bc *chain.Blockchain, transit chan<- *chain.Transaction) *TxSrv {
+	return &TxSrv{bc: bc, transit: transit}
 }
 
 func (srv *TxSrv) ReqTx(req *TxReq, stream TxSrv_ReqTxServer) error {
@@ -85,7 +85,7 @@ func ReqTx(cc *grpc.ClientConn, ctx context.Context, hashes [][]byte) ([]*chain.
 
 func (srv *TxSrv) SendTx(_ context.Context, tx *protos.Tx) (*protos.Ack, error) {
 	transaction := protos.ToTransaction(tx)
-	srv.pool.Add(transaction)
+	srv.transit <- transaction
 
 	// delete miner.go and invoke minning process herererererer
 	return &protos.Ack{}, nil

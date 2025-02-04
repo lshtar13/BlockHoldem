@@ -9,16 +9,26 @@ import (
 
 	"github.com/lshtar13/blockchain/chain"
 	"github.com/lshtar13/blockchain/node/global"
+	"github.com/lshtar13/blockchain/node/local"
 	"google.golang.org/grpc"
 )
 
 // var memPool map[string]*chain.Transaction
-type Srvs struct {
+type GlobalSrvs struct {
 	Blk    *global.BlkSrv
 	Tx     *global.TxSrv
 	Inv    *global.InvSrv
 	Vers   *global.VersSrv
 	Ledger *global.LedgerSrv
+}
+
+type LocalSrvs struct {
+	UTXO *local.UTXOSrv
+}
+
+type Srvs struct {
+	Global GlobalSrvs
+	Local  LocalSrvs
 }
 
 type Node struct {
@@ -29,9 +39,8 @@ type Node struct {
 	miner  Miner
 	ledger *global.Ledger
 	bc     *chain.Blockchain
-	// wg unify
-	wg  *sync.WaitGroup
-	lis net.Listener
+	wg     *sync.WaitGroup
+	lis    net.Listener
 }
 
 const (
@@ -87,6 +96,7 @@ func (n *Node) PreService() error {
 	}
 
 	n.ledger.Update()
+	log.Printf("ledger updating done ...\n")
 	wg := new(sync.WaitGroup)
 	for central := range n.ledger.Central {
 		wg.Add(1)
@@ -101,16 +111,21 @@ func (n *Node) Global() {
 	defer n.wg.Done()
 
 	server := grpc.NewServer()
-	n.srvs.Blk = global.NewBlkSrv(n.bc)
-	global.RegisterBlkSrvServer(server, n.srvs.Blk)
-	n.srvs.Tx = global.NewTxSrv(n.bc)
-	global.RegisterTxSrvServer(server, n.srvs.Tx)
-	n.srvs.Inv = global.NewInvSrv(n.bc)
-	global.RegisterInvSrvServer(server, n.srvs.Inv)
-	n.srvs.Vers = global.NewVersSrv(n.bc)
-	global.RegisterVersSrvServer(server, n.srvs.Vers)
-	n.srvs.Ledger = global.NewLedgerSrv(n.ledger)
-	global.RegisterLedgerSrvServer(server, n.srvs.Ledger)
+	n.srvs.Global.Blk = global.NewBlkSrv(n.bc)
+	global.RegisterBlkSrvServer(server, n.srvs.Global.Blk)
+
+	n.srvs.Global.Tx = global.NewTxSrv(n.bc, n.miner.transit)
+	global.RegisterTxSrvServer(server, n.srvs.Global.Tx)
+
+	n.srvs.Global.Inv = global.NewInvSrv(n.bc)
+	global.RegisterInvSrvServer(server, n.srvs.Global.Inv)
+
+	n.srvs.Global.Vers = global.NewVersSrv(n.bc)
+	global.RegisterVersSrvServer(server, n.srvs.Global.Vers)
+
+	n.srvs.Global.Ledger = global.NewLedgerSrv(n.ledger)
+	global.RegisterLedgerSrvServer(server, n.srvs.Global.Ledger)
+
 	if err := server.Serve(n.lis); err != nil {
 		log.Fatalf("error while serving:%v\n", err)
 	}
@@ -133,31 +148,37 @@ func (n *Node) Start(isMiner bool, mineCap int) error {
 	} else {
 		n.bc = bc
 	}
+	log.Printf("Get Blockchain ...\n")
 
 	if n.lis, err = net.Listen("tcp", fmt.Sprintf("localhost:%d", n.port)); err != nil {
 		log.Fatalf("err while listening in port %d: %v\n", n.port, err)
 	}
 	defer n.lis.Close()
+	log.Printf("listenning in  %s ...", fmt.Sprintf("localhost:%d", n.port))
 
 	if isMiner {
-		n.miner = *NewMiner(n.bc, mineCap)
+		n.miner = *NewMiner(n.bc, n.addr, mineCap, n.ledger)
 		go n.miner.Mine()
 		defer n.miner.Stop()
+		log.Printf("start mining ..\n")
 	}
 
 	n.wg = new(sync.WaitGroup)
 
 	n.wg.Add(1)
 	go n.Global()
+	log.Printf("start global services ...\n")
 
 	// todo: pre-service
 	if err := n.PreService(); err != nil {
 		return fmt.Errorf("error while preservicing:%v", err)
 	}
+	log.Printf("preservice done...\n")
 	defer n.ledger.Save2FIle()
 
 	n.wg.Add(1)
 	go n.Local()
+	log.Printf("start local services ...\n")
 
 	n.wg.Wait()
 	return nil

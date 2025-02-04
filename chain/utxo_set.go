@@ -130,7 +130,7 @@ func (u *UTXOSet) CountTxs() int {
 	return cnt
 }
 
-func (u *UTXOSet) Update(block *Block) {
+func (u *UTXOSet) Update(block *Block) error {
 	db := u.Blockchain.DB
 
 	err := db.Update(func(btx *bolt.Tx) error {
@@ -173,7 +173,5 @@ func (u *UTXOSet) Update(block *Block) {
 		return nil
 	})
 
-	if err != nil {
-		log.Panic(err)
-	}
+	return err
 }

@@ -57,6 +57,8 @@ func (cli *CLI) Run() {
 	sendTo := sendCmd.String("to", "", "to")
 	sendAmount := sendCmd.String("amount", "", "amount")
 	startNodeMinerAddress := startNodeCmd.String("miner", "", "miner")
+	startNodePort := startNodeCmd.String("port", "", "port")
+	startNodeMineCap := startNodeCmd.String("mineCap", "", "mineCap")
 
 	switch os.Args[1] {
 	case "createBlockchain":
@@ -124,6 +126,8 @@ func (cli *CLI) Run() {
 	}
 
 	if startNodeCmd.Parsed() {
-		cli.startNode(*startNodeMinerAddress)
+		port, _ := strconv.Atoi(*startNodePort)
+		mineCap, _ := strconv.Atoi(*startNodeMineCap)
+		cli.startNode(port, *startNodeMinerAddress, mineCap)
 	}
 }

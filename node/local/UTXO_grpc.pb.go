@@ -2,7 +2,7 @@
 // versions:
 // - protoc-gen-go-grpc v1.5.1
 // - protoc             v3.12.4
-// source: local/utxo.proto
+// source: local/UTXO.proto
 
 package local
 
@@ -19,103 +19,103 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	UtxoSrv_ReqBalance_FullMethodName = "/local.UtxoSrv/ReqBalance"
+	UTXOSrv_ReqBalance_FullMethodName = "/local.UTXOSrv/ReqBalance"
 )
 
-// UtxoSrvClient is the client API for UtxoSrv service.
+// UTXOSrvClient is the client API for UTXOSrv service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UtxoSrvClient interface {
+type UTXOSrvClient interface {
 	ReqBalance(ctx context.Context, in *BalanceReq, opts ...grpc.CallOption) (*Balance, error)
 }
 
-type utxoSrvClient struct {
+type uTXOSrvClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUtxoSrvClient(cc grpc.ClientConnInterface) UtxoSrvClient {
-	return &utxoSrvClient{cc}
+func NewUTXOSrvClient(cc grpc.ClientConnInterface) UTXOSrvClient {
+	return &uTXOSrvClient{cc}
 }
 
-func (c *utxoSrvClient) ReqBalance(ctx context.Context, in *BalanceReq, opts ...grpc.CallOption) (*Balance, error) {
+func (c *uTXOSrvClient) ReqBalance(ctx context.Context, in *BalanceReq, opts ...grpc.CallOption) (*Balance, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(Balance)
-	err := c.cc.Invoke(ctx, UtxoSrv_ReqBalance_FullMethodName, in, out, cOpts...)
+	err := c.cc.Invoke(ctx, UTXOSrv_ReqBalance_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UtxoSrvServer is the server API for UtxoSrv service.
-// All implementations must embed UnimplementedUtxoSrvServer
+// UTXOSrvServer is the server API for UTXOSrv service.
+// All implementations must embed UnimplementedUTXOSrvServer
 // for forward compatibility.
-type UtxoSrvServer interface {
+type UTXOSrvServer interface {
 	ReqBalance(context.Context, *BalanceReq) (*Balance, error)
-	mustEmbedUnimplementedUtxoSrvServer()
+	mustEmbedUnimplementedUTXOSrvServer()
 }
 
-// UnimplementedUtxoSrvServer must be embedded to have
+// UnimplementedUTXOSrvServer must be embedded to have
 // forward compatible implementations.
 //
 // NOTE: this should be embedded by value instead of pointer to avoid a nil
 // pointer dereference when methods are called.
-type UnimplementedUtxoSrvServer struct{}
+type UnimplementedUTXOSrvServer struct{}
 
-func (UnimplementedUtxoSrvServer) ReqBalance(context.Context, *BalanceReq) (*Balance, error) {
+func (UnimplementedUTXOSrvServer) ReqBalance(context.Context, *BalanceReq) (*Balance, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ReqBalance not implemented")
 }
-func (UnimplementedUtxoSrvServer) mustEmbedUnimplementedUtxoSrvServer() {}
-func (UnimplementedUtxoSrvServer) testEmbeddedByValue()                 {}
+func (UnimplementedUTXOSrvServer) mustEmbedUnimplementedUTXOSrvServer() {}
+func (UnimplementedUTXOSrvServer) testEmbeddedByValue()                 {}
 
-// UnsafeUtxoSrvServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UtxoSrvServer will
+// UnsafeUTXOSrvServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UTXOSrvServer will
 // result in compilation errors.
-type UnsafeUtxoSrvServer interface {
-	mustEmbedUnimplementedUtxoSrvServer()
+type UnsafeUTXOSrvServer interface {
+	mustEmbedUnimplementedUTXOSrvServer()
 }
 
-func RegisterUtxoSrvServer(s grpc.ServiceRegistrar, srv UtxoSrvServer) {
-	// If the following call pancis, it indicates UnimplementedUtxoSrvServer was
+func RegisterUTXOSrvServer(s grpc.ServiceRegistrar, srv UTXOSrvServer) {
+	// If the following call pancis, it indicates UnimplementedUTXOSrvServer was
 	// embedded by pointer and is nil.  This will cause panics if an
 	// unimplemented method is ever invoked, so we test this at initialization
 	// time to prevent it from happening at runtime later due to I/O.
 	if t, ok := srv.(interface{ testEmbeddedByValue() }); ok {
 		t.testEmbeddedByValue()
 	}
-	s.RegisterService(&UtxoSrv_ServiceDesc, srv)
+	s.RegisterService(&UTXOSrv_ServiceDesc, srv)
 }
 
-func _UtxoSrv_ReqBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _UTXOSrv_ReqBalance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(BalanceReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UtxoSrvServer).ReqBalance(ctx, in)
+		return srv.(UTXOSrvServer).ReqBalance(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: UtxoSrv_ReqBalance_FullMethodName,
+		FullMethod: UTXOSrv_ReqBalance_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UtxoSrvServer).ReqBalance(ctx, req.(*BalanceReq))
+		return srv.(UTXOSrvServer).ReqBalance(ctx, req.(*BalanceReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UtxoSrv_ServiceDesc is the grpc.ServiceDesc for UtxoSrv service.
+// UTXOSrv_ServiceDesc is the grpc.ServiceDesc for UTXOSrv service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UtxoSrv_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "local.UtxoSrv",
-	HandlerType: (*UtxoSrvServer)(nil),
+var UTXOSrv_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "local.UTXOSrv",
+	HandlerType: (*UTXOSrvServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "ReqBalance",
-			Handler:    _UtxoSrv_ReqBalance_Handler,
+			Handler:    _UTXOSrv_ReqBalance_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
-	Metadata: "local/utxo.proto",
+	Metadata: "local/UTXO.proto",
 }
